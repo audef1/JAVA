@@ -15,7 +15,7 @@ public class Main {
 		s.setDaemon(true);
 		r.setDaemon(true);
 		
-		r.start();
+		//r.start();
 		s.start();
 		
 		System.in.read();

@@ -1,9 +1,7 @@
 package ch.bfh.fbi.audef1.Messenger.io;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
-import java.util.Scanner;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -25,7 +23,8 @@ public class MqttChatReciever extends Thread {
 		MqttClient mqttClient;
 		
 		try {
-			mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", "ch.bfh.fbi.audef1.listener");
+			mqttClient = new MqttClient("tcp://remote.floeggu.ch:1883", "test");
+			//mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", "ch.bfh.fbi.audef1.listener");
 		    mqttClient.setCallback(new MqttCallback() {
 	
 	    	@Override
@@ -49,7 +48,8 @@ public class MqttChatReciever extends Thread {
 	    MqttConnectOptions options = new MqttConnectOptions();
 	    options.setCleanSession(false);
 	    mqttClient.connect(options);
-	    mqttClient.subscribe("ch/bfh/fbi/talk/+");
+	    //mqttClient.subscribe("ch/bfh/fbi/talk/+");
+	    mqttClient.subscribe("test");
 	    
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block

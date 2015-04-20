@@ -1,8 +1,6 @@
 package ch.bfh.fbi.audef1.Messenger.io;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
@@ -23,7 +21,7 @@ public class MqttChatSender extends Thread{
 	public void run(){
 		MqttClient mqttClient;
 		try {
-			mqttClient = new MqttClient("tcp://iot.eclipse.org:1883", "ch.bfh.fbi.audef1.sender");
+			mqttClient = new MqttClient("tcp://remote.floeggu.ch:1883", "test");
 		mqttClient.connect();
 	    while (true) {
 	    	String payloadString = JOptionPane.showInputDialog("Talk");
@@ -34,7 +32,7 @@ public class MqttChatSender extends Thread{
 	    	byte[] bytes = ser.serialize(new Message(payloadString, "florian"));
 	    	
 	    	MqttMessage message = new MqttMessage(bytes);
-	    	mqttClient.publish("ch/bfh/fbi/talk/audef1", message);
+	    	mqttClient.publish("test", message);
 	    }
 	    mqttClient.disconnect();
 		} catch (MqttException | ClassNotFoundException | IOException e) {
