@@ -33,6 +33,7 @@ public class Dice {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private Dice(){
 		//leerer Cunstructor muss da sein für jaxb
 	}
