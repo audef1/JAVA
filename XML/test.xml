@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:statisticalDice xsi:schemaLocation="http://ch.fbi.xml.beispielEins schema1.xsd" xmlns:ns2="http://ch.fbi.xml.dice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <minValue>0</minValue>
+    <maxValue>6</maxValue>
+    <actValue>2</actValue>
+    <statistics>12</statistics>
+    <statistics>21</statistics>
+    <statistics>15</statistics>
+    <statistics>17</statistics>
+    <statistics>14</statistics>
+    <statistics>11</statistics>
+    <statistics>10</statistics>
+</ns2:statisticalDice>

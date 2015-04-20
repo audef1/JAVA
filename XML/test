@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:time_unit xmlns:ns2="http://ch.fbi.xml.marshaller">
+    <unit_label>blaa</unit_label>
+</ns2:time_unit>

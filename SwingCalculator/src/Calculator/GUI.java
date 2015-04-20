@@ -3,13 +3,14 @@ package Calculator;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import Listeners.CalcMouseListener;
+import Listeners.CalcActionListener;
 
 public class GUI extends JFrame{
 
@@ -79,14 +80,15 @@ public class GUI extends JFrame{
 		this.add(pnlOperators);
 		this.add(pnlOutput);
 		
-		//add ButtonLIsteners
-		plus.addMouseListener(new CalcMouseListener(this, "+"));
-		minus.addMouseListener(new CalcMouseListener(this, "-"));
-		times.addMouseListener(new CalcMouseListener(this, "*"));
-		divide.addMouseListener(new CalcMouseListener(this, "/"));
-		clear.addMouseListener(new CalcMouseListener(this, "clear"));
+		//add ButtonLIsteners	
+		ActionListener listener = new CalcActionListener(this);
+		
+		plus.addActionListener(listener);
+		minus.addActionListener(listener);
+		times.addActionListener(listener);
+		divide.addActionListener(listener);
+		clear.addActionListener(listener);
 		
 		this.setVisible(true);
 	}
-	
 }
