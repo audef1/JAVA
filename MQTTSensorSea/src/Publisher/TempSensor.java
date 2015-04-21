@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class TempSensor extends Sensor{
 
-	private int temp;
+	private int temp = 0;
 	
 	public TempSensor(String id){
 		super.setTimestamp(new Date().getTime());

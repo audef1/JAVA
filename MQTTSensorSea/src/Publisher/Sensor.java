@@ -1,7 +1,11 @@
 package Publisher;
 
-public abstract class Sensor {
+import java.io.Serializable;
 
+public abstract class Sensor extends Thread implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	private long timestamp;
 	private String sourceID;
 	

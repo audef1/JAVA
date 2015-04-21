@@ -1,4 +1,4 @@
-package Publisher;
+package Application;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,19 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 
-import ch.Message;
+import Publisher.Sensor;
 
 public class Serialiser{
 
-	public byte[] serialize(Message m) throws IOException, ClassNotFoundException{
-		//System.out.println(">" + m.toString());
+	public byte[] serialize(Sensor s) throws IOException, ClassNotFoundException{
 		
-		// beim serialisieren immer oos nehmen anstelle von PrintWriter!
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream aos = new ObjectOutputStream(baos);  
-		aos.writeObject(m);
+		aos.writeObject(s);
 		aos.close();
 		
 		byte[] bytes = baos.toByteArray();
@@ -27,8 +24,8 @@ public class Serialiser{
 	}
 	
 	public Object deserialize(byte[] bytes){
-		Object o=null;
-		//Das serialisierte ByteArray wieder einlesen
+		Object o = null;
+
 		InputStream is = new ByteArrayInputStream(bytes);
 		ObjectInputStream ois;
 		try {
