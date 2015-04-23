@@ -36,13 +36,20 @@ public class Publisher {
 	public void connect(String host, String topic, int port, String username, String password){
 		try {
 			this.topic = topic;
-			mqttClient = new MqttClient("tcp://" + host + ":" + port + "", clientID);
-			connOpt.setCleanSession(true);
-			connOpt.setUserName(username);
-			connOpt.setPassword(password.toCharArray());
-            	System.out.println("Connecting to broker: "+ host);
-			mqttClient.connect(connOpt);
-				System.out.println("Connected!");
+			
+			if (mqttClient == null){
+				mqttClient = new MqttClient("tcp://" + host + ":" + port + "", clientID);
+				connOpt.setCleanSession(true);
+				connOpt.setUserName(username);
+				connOpt.setPassword(password.toCharArray());
+	            	System.out.println("Connecting to broker: "+ host);
+				mqttClient.connect(connOpt);
+					System.out.println("Connected!");
+			}
+			else
+			{
+				System.out.println("Connection to " + mqttClient.getServerURI() + " already established.");
+			}
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -50,14 +57,20 @@ public class Publisher {
 	
 	public void connect(String host, String topic, String username, String password){
 		try {
-			this.topic = topic;
-			mqttClient = new MqttClient("tcp://" + host + ":1883", clientID);
-			connOpt.setCleanSession(true);
-			connOpt.setUserName(username);
-			connOpt.setPassword(password.toCharArray());
-            	System.out.println("Connecting to broker: "+ host);
-			mqttClient.connect(connOpt);
-				System.out.println("Connected!");
+			if (mqttClient == null){
+				this.topic = topic;
+				mqttClient = new MqttClient("tcp://" + host + ":1883", clientID);
+				connOpt.setCleanSession(true);
+				connOpt.setUserName(username);
+				connOpt.setPassword(password.toCharArray());
+	            	System.out.println("Connecting to broker: "+ host);
+				mqttClient.connect(connOpt);
+					System.out.println("Connected!");
+			}
+			else
+			{
+				System.out.println("Connection to " + mqttClient.getServerURI() + " already established.");
+			}
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -65,11 +78,17 @@ public class Publisher {
 	
 	public void connect(String host, String topic){
 		try {
-			this.topic = topic;
-			mqttClient = new MqttClient("tcp://" + host + ":1883", clientID);
-				System.out.println("Connecting to broker: "+ host);
-			mqttClient.connect();
-				System.out.println("Connected!");
+			if (mqttClient == null){
+				this.topic = topic;
+				mqttClient = new MqttClient("tcp://" + host + ":1883", clientID);
+					System.out.println("Connecting to broker: "+ host);
+				mqttClient.connect();
+					System.out.println("Connected!");
+			}
+			else
+			{
+				System.out.println("Connection to " + mqttClient.getServerURI() + " already established.");
+			}
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

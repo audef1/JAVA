@@ -1,27 +1,32 @@
 package Publisher;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.util.Date;
 
 public class TempSensor extends Sensor{
 
 	private int temp = 0;
 	
-	public TempSensor(String id){
-		super.setTimestamp(new Date().getTime());
-		super.setSourceID(id);
+	public TempSensor(){}
+	
+	public TempSensor(String id, Publisher p){
+		setTimestamp(new Date().getTime());
+		setSourceID(id);
+		setPublisher(p);
 	}
 
 	@Override
-	public void getValues() {
-	
-		//connect to device with sensorID and get value 
-		temp = 10;
-		
+	public void getValue() {
+		Point p = MouseInfo.getPointerInfo().getLocation();
+		temp = p.x;
+		System.out.println("Getting Value from " + getSourceID() + ": " + temp );
+		//testhalber mit Mausposition
+		//connect over bluetooth to sensor with sensorID and get value 
 	}
 	
 	@Override
 	public void export() {
-		//serialize object and call publisher.publish();
-		
+		getPublisher().publish(this);
 	}	
 }
