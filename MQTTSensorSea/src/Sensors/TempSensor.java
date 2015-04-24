@@ -22,7 +22,6 @@ public class TempSensor extends Sensor{
 	public void getValue() {
 		Point p = MouseInfo.getPointerInfo().getLocation();
 		temp = p.x;
-		System.out.println("Getting Value from " + getSourceID() + ": " + temp );
 		//testhalber mit Mausposition
 		//connect over bluetooth to sensor with sensorID and get value 
 	}
@@ -35,5 +34,5 @@ public class TempSensor extends Sensor{
 	@Override
 	public String toString() {
 		return getTimestamp() + " - " + getSourceID() + ": " + temp + ".";
-	}	
+	}
 }

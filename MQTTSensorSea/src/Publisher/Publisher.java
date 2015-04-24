@@ -46,21 +46,16 @@ public class Publisher {
 	}
 	
 	public void addTopic(String topic){
-		
-		for (String t:topics){
-			if (t == topic)
+			if (topics.contains(topic))
 				System.out.println("Topic is already in the distributionlist.");
 			else
 				topics.add(topic);
-		}
 	}
 	
 	public void removeTopic(String topic){
-		for (String t:topics){
-			if (t == topic)
-				topics.remove(topics.indexOf(t));
-			else
-				System.out.println("No such topic to remove.");
-		}
+		if (topics.contains(topic))
+				topics.remove(topics.indexOf(topic));
+		else
+			System.out.println("No such topic to remove.");
 	}
 }

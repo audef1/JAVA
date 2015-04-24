@@ -53,34 +53,32 @@ public class Subscriber extends Thread {
 			    });
 			}
 		} catch (MqttException e) {
+			on = false;
 			e.printStackTrace();
 		}
 	}
 	
 	public void addSensor(Sensor s){
 		sensors.add(s);
+		System.out.println("Sensor added to list.");
 	}
 	
 	public void subscribe(String topic){
-		for (String t:topics){
-			if (t == topic)
-				System.out.println("Already subscribed to the topic " + topic + ".");
-			else{
-				topics.add(topic);
-				System.out.println("Subscribed to the topic " + topic + ".");
-			}
-				
+		if (topics.contains(topic)){
+			System.out.println("Already subscribed to the topic " + topic + ".");
+		}
+		else{
+			topics.add(topic);
+			System.out.println("Subscribed to the topic " + topic + ".");
 		}
 	}
 	
 	public void unsubscribe(String topic){
-		for (String t:topics){
-			if (t == topic){
-				topics.remove(topics.indexOf(t));
-				System.out.println("Unsubscribed from topic " + topic + ".");
-			}
-			else
-				System.out.println("No such topic to unsubscribe from.");
+		if (topics.contains(topic)){
+			topics.remove(topics.indexOf(topic));
+			System.out.println("Unsubscribed from topic " + topic + ".");
 		}
+		else
+			System.out.println("No such topic to unsubscribe from.");
 	}	
 }

@@ -10,24 +10,22 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		Broker b = new Broker("Temperatur-Out");
-		b.connect("remote.floeggu.ch", 1883, "florian", "12345678");
-		Publisher p = new Publisher(b);
-		p.addTopic("test");
+		Broker bro = new Broker("Temperatur-Out");
+		bro.connect("remote.floeggu.ch", 1883, "florian", "12345678");
 		
-		Sensor s = new TempSensor("Wohnzimmer",p);
-		s.setInterval(2000);
+		Publisher pub = new Publisher(bro);
+		pub.addTopic("test");
 		
-		Sensor t = new TempSensor("Schlafzimmer",p);
-		t.setInterval(5000);
-		
-		Subscriber sub = new Subscriber(b);
+		Subscriber sub = new Subscriber(bro);
 		sub.subscribe("test");
 		sub.start();
 		
+		Sensor s = new TempSensor("Wohnzimmer",pub);
+		s.setInterval(3000);
 		s.start();
-		t.start();
 		
-
+		//Sensor t = new TempSensor("Schlafzimmer",p);
+		//t.setInterval(5000);
+		//t.start();
 	}
 }
