@@ -1,4 +1,4 @@
-package PetShop;
+package petShop;
 
 public abstract class APet<F extends Food> implements Pet<F>{
 	private final String name;

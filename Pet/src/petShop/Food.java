@@ -1,4 +1,4 @@
-package PetShop;
+package petShop;
 
 public interface Food {
 

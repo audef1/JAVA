@@ -10,7 +10,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		Broker bro = new Broker("Temperatur-Out");
+		Broker bro = new Broker("TempSensors");
 		bro.connect("remote.floeggu.ch", 1883, "florian", "12345678");
 		
 		Publisher pub = new Publisher(bro);
