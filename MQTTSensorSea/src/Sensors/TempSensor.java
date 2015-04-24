@@ -2,6 +2,7 @@ package Sensors;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import Publisher.Publisher;
@@ -33,7 +34,8 @@ public class TempSensor extends Sensor{
 
 	@Override
 	public String toString() {
-		Date date = new Date(getTimestamp());
+		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		String date = df.format(new Date(getTimestamp()));
 		return date + " - " + getSourceID() + ": " + temp + ".";
 	}
 }
