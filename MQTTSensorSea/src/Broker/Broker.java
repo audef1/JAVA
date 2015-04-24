@@ -6,12 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class Broker {
 
-	private String host;
-	private String username;
-	private String password;
 	private String clientID;
-	private int port;
-	
 	
 	private MqttClient client;
 	private MqttConnectOptions connOpt = new MqttConnectOptions();

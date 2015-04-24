@@ -2,7 +2,6 @@ package Subscriber;
 
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
