@@ -33,6 +33,7 @@ public class TempSensor extends Sensor{
 
 	@Override
 	public String toString() {
-		return getTimestamp() + " - " + getSourceID() + ": " + temp + ".";
+		Date date = new Date(getTimestamp());
+		return date + " - " + getSourceID() + ": " + temp + ".";
 	}
 }

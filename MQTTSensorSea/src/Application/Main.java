@@ -15,8 +15,10 @@ public class Main {
 		
 		Publisher pub = new Publisher(bro);
 		pub.addTopic("test");
+		pub.addTopic("test");
 		
 		Subscriber sub = new Subscriber(bro);
+		sub.subscribe("test");
 		sub.subscribe("test");
 		sub.start();
 		
