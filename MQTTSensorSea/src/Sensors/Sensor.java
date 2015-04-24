@@ -1,6 +1,8 @@
-package Publisher;
+package Sensors;
 
 import java.io.Serializable;
+
+import Publisher.Publisher;
 
 public abstract class Sensor extends Thread implements Serializable {
 
@@ -18,6 +20,7 @@ public abstract class Sensor extends Thread implements Serializable {
 	
 	public abstract void getValue();
 	public abstract void export();
+	public abstract String toString();
 	
 	public synchronized void run(){
 		while (on){
@@ -34,6 +37,10 @@ public abstract class Sensor extends Thread implements Serializable {
 	
 	public void setTimestamp(long timestamp){
 		this.timestamp = timestamp;
+	}
+	
+	public long getTimestamp(){
+		return timestamp;
 	}
 	
 	public void setSourceID(String id){

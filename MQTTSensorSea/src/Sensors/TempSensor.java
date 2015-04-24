@@ -1,8 +1,10 @@
-package Publisher;
+package Sensors;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.Date;
+
+import Publisher.Publisher;
 
 public class TempSensor extends Sensor{
 
@@ -28,5 +30,10 @@ public class TempSensor extends Sensor{
 	@Override
 	public void export() {
 		getPublisher().publish(this);
+	}
+
+	@Override
+	public String toString() {
+		return getTimestamp() + " - " + getSourceID() + ": " + temp + ".";
 	}	
 }

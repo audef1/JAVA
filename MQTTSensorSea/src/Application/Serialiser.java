@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import Publisher.Sensor;
+import Sensors.Sensor;
 
 public class Serialiser{
 
