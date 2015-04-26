@@ -23,7 +23,7 @@ public class Main {
 		sub.start();
 		
 		Sensor s = new TempSensor("Wohnzimmer",pub);
-		s.setInterval(3000);
+		s.setInterval(1000);
 		s.start();
 		
 		//Sensor t = new TempSensor("Schlafzimmer",p);

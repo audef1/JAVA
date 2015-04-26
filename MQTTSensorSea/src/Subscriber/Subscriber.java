@@ -42,7 +42,7 @@ public class Subscriber extends Thread {
 			    	public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException{
 					   	System.out.printf("From (%s):", string);
 					   	Sensor s = (Sensor) ser.deserialize(message.getPayload());
-					   	sensors.add(s);
+					   	addSensor(s);
 					   	System.out.println(s);
 				    }
 			
@@ -59,9 +59,18 @@ public class Subscriber extends Thread {
 	}
 	
 	public void addSensor(Sensor s){
-		sensors.add(s);
-		System.out.println("Sensor added to list.");
+		if (sensors.size() < 10){
+			sensors.add(s);
+			System.out.println("Sensor added to list.");
+		}
+		else
+		{
+			export();
+			sensors.add(s);
+			System.out.println("Sensor added to list.");
+		}
 	}
+
 	
 	public void subscribe(String topic){
 		if (topics.contains(topic)){
@@ -80,5 +89,11 @@ public class Subscriber extends Thread {
 		}
 		else
 			System.out.println("No such topic to unsubscribe from.");
-	}	
+	}
+	
+	public void export(){
+		//send ArrayList<Sensor> to JAXB and write XML-file
+		System.out.println("Exporting list...");
+		sensors = new ArrayList<Sensor>();
+	}
 }

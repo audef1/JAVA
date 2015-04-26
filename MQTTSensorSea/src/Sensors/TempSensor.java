@@ -7,6 +7,7 @@ import java.util.Date;
 
 import Publisher.Publisher;
 
+@SuppressWarnings("serial")
 public class TempSensor extends Sensor{
 
 	private int temp = 0;
@@ -28,7 +29,7 @@ public class TempSensor extends Sensor{
 	}
 	
 	@Override
-	public void export() {
+	public void sendValue() {
 		getPublisher().publish(this);
 	}
 

@@ -19,13 +19,13 @@ public abstract class Sensor extends Thread implements Serializable {
 	}
 	
 	public abstract void getValue();
-	public abstract void export();
+	public abstract void sendValue();
 	public abstract String toString();
 	
 	public synchronized void run(){
 		while (on){
 			getValue();
-			export();
+			sendValue();
 			try {
 				wait(interval);
 			} catch (InterruptedException e) {
