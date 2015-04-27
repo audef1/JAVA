@@ -15,18 +15,18 @@ public class Main {
 		
 		Publisher pub = new Publisher(bro);
 		pub.addTopic("test");
+		pub.addTopic("blaa");
 		pub.setNotify(false);
-		
+
 		Subscriber sub = new Subscriber(bro);
-		sub.subscribe("test");
 		sub.subscribe("test");
 		sub.setArraySize(10);
 		sub.setNotify(true);
 		sub.start();
 		
-		Sensor s = new TempSensor("Wohnzimmer",pub);
-		s.setInterval(500);
-		s.start();
+		Sensor sen = new TempSensor("Wohnzimmer",pub);
+		sen.setInterval(500);
+		sen.start();
 		
 		//Sensor t = new TempSensor("Schlafzimmer",pub);
 		//t.setInterval(5000);

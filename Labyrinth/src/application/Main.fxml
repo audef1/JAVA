@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="root" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem fx:id="menuGenerate" mnemonicParsing="false" onAction="#mazeGenerate" text="Generate Maze" />
+            <MenuItem fx:id="menuLoad" mnemonicParsing="false" onAction="#mazeLoad" text="Load Maze" />
+            <MenuItem fx:id="menuClose" mnemonicParsing="false" onAction="#mazeClose" text="Close" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <HBox prefHeight="40.0" prefWidth="640.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Set start position:">
+                     <HBox.margin>
+                        <Insets left="20.0" top="15.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Label text="X:">
+                     <HBox.margin>
+                        <Insets left="10.0" top="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="txfX" alignment="CENTER" prefHeight="26.0" prefWidth="36.0" promptText="0" text="0">
+                     <HBox.margin>
+                        <Insets left="5.0" top="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Label text="Y:">
+                     <HBox.margin>
+                        <Insets left="10.0" top="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="txfY" alignment="CENTER" prefHeight="26.0" prefWidth="36.0" promptText="0" text="0">
+                     <HBox.margin>
+                        <Insets left="5.0" top="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button fx:id="btnSolve" mnemonicParsing="false" onAction="#mazeSolve" prefHeight="26.0" prefWidth="103.0" text="Solve it!">
+                     <HBox.margin>
+                        <Insets left="15.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Label fx:id="lblMessage" prefHeight="16.0" prefWidth="235.0" textFill="RED">
+                     <HBox.margin>
+                        <Insets left="15.0" top="15.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <Canvas fx:id="cvsMaze" height="300.0" layoutX="14.0" layoutY="54.0" width="610.0" AnchorPane.leftAnchor="15.0" />
+            <Canvas fx:id="cvsPath" height="300.0" layoutX="15.0" layoutY="54.0" width="610.0" />
+         </children>
+    </AnchorPane>
+  </children>
+  <stylesheets>
+    <URL value="@application.css" />
+  </stylesheets>
+</VBox>

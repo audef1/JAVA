@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="243.0" y="124.0">ch.bfh.ti.labyrinth.Solver.Solver</node>
+    <node x="0.0" y="168.0">ch.bfh.ti.labyrinth.Creator.LabyrinthModel</node>
+    <node x="187.0" y="0.0">ch.bfh.ti.labyrinth.Creator.Tile</node>
+    <node x="507.00000000000006" y="157.5">ch.bfh.ti.labyrinth.application.Main</node>
+    <node x="66.07500000000005" y="336.0">ch.bfh.ti.labyrinth.application.Controller</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="ch.bfh.ti.labyrinth.application.Controller" target="ch.bfh.ti.labyrinth.Creator.LabyrinthModel">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ch.bfh.ti.labyrinth.Solver.Solver" target="ch.bfh.ti.labyrinth.Creator.Tile">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ch.bfh.ti.labyrinth.application.Main" target="ch.bfh.ti.labyrinth.Creator.Tile">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ch.bfh.ti.labyrinth.Creator.LabyrinthModel" target="ch.bfh.ti.labyrinth.Creator.Tile">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="ch.bfh.ti.labyrinth.application.Controller" target="ch.bfh.ti.labyrinth.Solver.Solver">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="350.5" y="237.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

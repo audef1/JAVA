@@ -56,6 +56,7 @@ public class Subscriber extends Thread {
 			}
 		} catch (MqttException e) {
 			on = false;
+			broker.disconnect();
 			e.printStackTrace();
 		}
 	}
@@ -102,8 +103,10 @@ public class Subscriber extends Thread {
 	}
 	
 	public void export(){
-		//send ArrayList<Sensor> to JAXB and write XML-file
 		if (notify){ System.out.println("Exporting list...."); } else { };
+		
+		//send ArrayList<Sensor> to JAXB and write XML-file
+		
 		sensors = new ArrayList<Sensor>();
 	}
 }
