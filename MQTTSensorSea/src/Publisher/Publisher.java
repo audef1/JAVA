@@ -16,6 +16,8 @@ public class Publisher {
 	private Broker broker;
 	private ArrayList<String> topics = new ArrayList<String>();
 	private Serialiser ser = new Serialiser();
+	private boolean on = true;
+	private boolean notify = false;
 	
 	public Publisher(Broker broker){
 		this.broker = broker;
@@ -31,7 +33,7 @@ public class Publisher {
 			try {
 				for (String topic:topics){
 					broker.getClient().publish(topic, message);
-					System.out.println("Sensorvalue published to " + topic + "!");
+					if (notify){System.out.println("Sensorvalue published to " + topic + "!");}else{};
 				}
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
@@ -45,17 +47,24 @@ public class Publisher {
 		}
 	}
 	
+	public void setNotify(boolean notify){
+		this.notify = notify;
+	}
+	
 	public void addTopic(String topic){
-			if (topics.contains(topic))
-				System.out.println("Topic is already in the distributionlist.");
+			if (topics.contains(topic)){
+				if (notify){System.out.println("Topic is already in the distributionlist.");}else{};
+			}
 			else
+			{
 				topics.add(topic);
+			}	
 	}
 	
 	public void removeTopic(String topic){
 		if (topics.contains(topic))
 				topics.remove(topics.indexOf(topic));
 		else
-			System.out.println("No such topic to remove.");
+			if (notify){System.out.println("No such topic to remove.");}else{};
 	}
 }

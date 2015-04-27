@@ -42,11 +42,10 @@ public class Subscriber extends Thread {
 			    	@Override
 			    	public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException{
 					   	Sensor s = (Sensor) ser.deserialize(message.getPayload());
-					   	addSensor(s);
 					   	if (notify){
-					   		System.out.println(s);
-					   		System.out.printf("From (%s):", string);
+					   		System.out.println("From " + string + ": " + s );
 					   	}
+					   	addSensor(s);
 				    }
 			
 			    	@Override
@@ -64,13 +63,13 @@ public class Subscriber extends Thread {
 	public void addSensor(Sensor s){
 		if (sensors.size() < arraySize){
 			sensors.add(s);
-			if (notify){System.out.println("Sensor added to list.");}else{};
+			if (notify){System.out.println("Sensor " + s.getSourceID() + " added to list.");}else{};
 		}
 		else
 		{
 			export();
 			sensors.add(s);
-			if (notify){System.out.println("Sensor added to list.");}else{};
+			if (notify){System.out.println("Sensor " + s.getSourceID() + " added to list.");}else{};
 		}
 	}
 
@@ -104,7 +103,7 @@ public class Subscriber extends Thread {
 	
 	public void export(){
 		//send ArrayList<Sensor> to JAXB and write XML-file
-		if (notify){System.out.println("Exporting list...");}else{};
+		if (notify){ System.out.println("Exporting list...."); } else { };
 		sensors = new ArrayList<Sensor>();
 	}
 }
