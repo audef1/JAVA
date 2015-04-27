@@ -20,6 +20,8 @@ public class Main {
 		Subscriber sub = new Subscriber(bro);
 		sub.subscribe("test");
 		sub.subscribe("test");
+		sub.setArraySize(10);
+		//sub.setNotify(true);
 		sub.start();
 		
 		Sensor s = new TempSensor("Wohnzimmer",pub);

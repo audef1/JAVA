@@ -12,7 +12,6 @@ import Application.Serialiser;
 import Broker.Broker;
 import Sensors.Sensor;
 
-
 public class Subscriber extends Thread {
 
 	private ArrayList<Sensor> sensors = new ArrayList<Sensor>();
@@ -20,6 +19,8 @@ public class Subscriber extends Thread {
 	private Broker broker;
 	private Serialiser ser = new Serialiser();
 	private boolean on = true;
+	private boolean notify = false;
+	private int arraySize = 1000;
 	
 	public Subscriber(Broker broker){
 		this.broker = broker;
@@ -40,10 +41,12 @@ public class Subscriber extends Thread {
 			
 			    	@Override
 			    	public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException{
-					   	System.out.printf("From (%s):", string);
 					   	Sensor s = (Sensor) ser.deserialize(message.getPayload());
 					   	addSensor(s);
-					   	System.out.println(s);
+					   	if (notify){
+					   		System.out.println(s);
+					   		System.out.printf("From (%s):", string);
+					   	}
 				    }
 			
 			    	@Override
@@ -59,41 +62,49 @@ public class Subscriber extends Thread {
 	}
 	
 	public void addSensor(Sensor s){
-		if (sensors.size() < 10){
+		if (sensors.size() < arraySize){
 			sensors.add(s);
-			System.out.println("Sensor added to list.");
+			if (notify){System.out.println("Sensor added to list.");}else{};
 		}
 		else
 		{
 			export();
 			sensors.add(s);
-			System.out.println("Sensor added to list.");
+			if (notify){System.out.println("Sensor added to list.");}else{};
 		}
 	}
 
 	
 	public void subscribe(String topic){
 		if (topics.contains(topic)){
-			System.out.println("Already subscribed to the topic " + topic + ".");
+			if (notify){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
 		}
 		else{
 			topics.add(topic);
-			System.out.println("Subscribed to the topic " + topic + ".");
+			if (notify){System.out.println("Subscribed to the topic " + topic + ".");}else{};
 		}
 	}
 	
 	public void unsubscribe(String topic){
 		if (topics.contains(topic)){
 			topics.remove(topics.indexOf(topic));
-			System.out.println("Unsubscribed from topic " + topic + ".");
+			if (notify){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 		}
 		else
-			System.out.println("No such topic to unsubscribe from.");
+			if (notify){System.out.println("No such topic to unsubscribe from.");}else{};
+	}
+	
+	public void setArraySize(int arraySize){
+		this.arraySize = arraySize;		
+	}
+	
+	public void setNotify(boolean notify){
+		this.notify = notify;
 	}
 	
 	public void export(){
 		//send ArrayList<Sensor> to JAXB and write XML-file
-		System.out.println("Exporting list...");
+		if (notify){System.out.println("Exporting list...");}else{};
 		sensors = new ArrayList<Sensor>();
 	}
 }
