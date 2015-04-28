@@ -10,20 +10,21 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import Application.Serialiser;
 import Broker.Broker;
+import Datastore.Datastore;
 import Sensors.Sensor;
 
 public class Subscriber extends Thread {
-
-	private ArrayList<Sensor> sensors = new ArrayList<Sensor>();
+	
+	private Datastore datastore;
 	private ArrayList<String> topics = new ArrayList<String>();
 	private Broker broker;
 	private Serialiser ser = new Serialiser();
 	private boolean on = true;
 	private boolean notify = false;
-	private int arraySize = 1000;
 	
-	public Subscriber(Broker broker){
+	public Subscriber(Broker broker, Datastore datastore){
 		this.broker = broker;
+		this.datastore = datastore;
 	}
 	
 	public synchronized void run(){
@@ -45,7 +46,7 @@ public class Subscriber extends Thread {
 					   	if (notify){
 					   		System.out.println("From " + string + ": " + s );
 					   	}
-					   	addSensor(s);
+					   	datastore.add(s);
 				    }
 			
 			    	@Override
@@ -60,20 +61,6 @@ public class Subscriber extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
-	public void addSensor(Sensor s){
-		if (sensors.size() < arraySize){
-			sensors.add(s);
-			if (notify){System.out.println("Sensor " + s.getSourceID() + " added to list.");}else{};
-		}
-		else
-		{
-			export();
-			sensors.add(s);
-			if (notify){System.out.println("Sensor " + s.getSourceID() + " added to list.");}else{};
-		}
-	}
-
 	
 	public void subscribe(String topic){
 		if (topics.contains(topic)){
@@ -94,19 +81,8 @@ public class Subscriber extends Thread {
 			if (notify){System.out.println("No such topic to unsubscribe from.");}else{};
 	}
 	
-	public void setArraySize(int arraySize){
-		this.arraySize = arraySize;		
-	}
-	
 	public void setNotify(boolean notify){
 		this.notify = notify;
 	}
-	
-	public void export(){
-		if (notify){ System.out.println("Exporting list...."); } else { };
-		
-		//send ArrayList<Sensor> to JAXB and write XML-file
-		
-		sensors = new ArrayList<Sensor>();
-	}
+
 }

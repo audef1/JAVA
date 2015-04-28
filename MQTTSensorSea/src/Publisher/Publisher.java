@@ -16,7 +16,6 @@ public class Publisher {
 	private Broker broker;
 	private ArrayList<String> topics = new ArrayList<String>();
 	private Serialiser ser = new Serialiser();
-	private boolean on = true;
 	private boolean notify = false;
 	
 	public Publisher(Broker broker){

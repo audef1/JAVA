@@ -1,6 +1,9 @@
 package Sensors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import Publisher.Publisher;
 
@@ -8,24 +11,27 @@ public abstract class Sensor extends Thread implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private long timestamp;
-	private String sourceID;
-	private transient Publisher publisher;
-	private boolean on = true;
-	private int interval = 1000;
+	protected long timestamp;
+	protected String sourceID;
+	protected transient Publisher publisher;
+	protected transient boolean on = true;
+	protected transient int interval = 1000;
+	
+	protected ArrayList<Object> values = new ArrayList<Object>();
 	
 	public Sensor(){
 		
 	}
 	
 	public abstract void getValue();
-	public abstract void sendValue();
 	public abstract String toString();
 	
 	public synchronized void run(){
 		while (on){
+			setTimestamp();
 			getValue();
 			sendValue();
+			cleanup();
 			try {
 				wait(interval);
 			} catch (InterruptedException e) {
@@ -35,8 +41,16 @@ public abstract class Sensor extends Thread implements Serializable {
 		}
 	}
 	
-	public void setTimestamp(long timestamp){
-		this.timestamp = timestamp;
+	public void sendValue() {
+		publisher.publish(this);
+	}
+	
+	private void cleanup(){
+		values = new ArrayList<Object>();
+	}
+	
+	public void setTimestamp(){
+		this.timestamp = new Date().getTime();
 	}
 	
 	public long getTimestamp(){

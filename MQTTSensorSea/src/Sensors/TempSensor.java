@@ -9,34 +9,26 @@ import Publisher.Publisher;
 
 @SuppressWarnings("serial")
 public class TempSensor extends Sensor{
-
-	private int temp = 0;
 	
 	public TempSensor(){}
 	
 	public TempSensor(String id, Publisher p){
-		setTimestamp(new Date().getTime());
-		setSourceID(id);
-		setPublisher(p);
+		sourceID = id;
+		publisher = p;
 	}
 
 	@Override
 	public void getValue() {
 		Point p = MouseInfo.getPointerInfo().getLocation();
-		temp = p.x;
+		values.add(p.x);
 		//testhalber mit Mausposition
 		//connect over bluetooth to sensor with sensorID and get value 
-	}
-	
-	@Override
-	public void sendValue() {
-		getPublisher().publish(this);
 	}
 
 	@Override
 	public String toString() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		String date = df.format(new Date(getTimestamp()));
-		return date + " - " + getSourceID() + ": " + temp + ".";
+		return date + " - " + getSourceID() + ": " + values.get(0) + ".";
 	}
 }
