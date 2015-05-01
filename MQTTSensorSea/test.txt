@@ -1,0 +1,14 @@
+
+		ObservableList<Sensor> sensordata = FXCollections.observableArrayList(store.getDatastore());
+		
+		sensordata.addListener(new ListChangeListener<Sensor>(){
+		    public void onChanged( javafx.collections.ListChangeListener.Change<? extends Sensor> s){
+		      while (s.next()) {
+		    	int x = (int) s.getAddedSubList().get(0).getValues().get(0);
+		    	int y = (int) s.getAddedSubList().get(0).getValues().get(1);
+		        sensor1.getData().add(new XYChart.Data(x,x));
+		        lineChart.getData().add(sensor1);
+		      }
+		    }
+		  }
+		);

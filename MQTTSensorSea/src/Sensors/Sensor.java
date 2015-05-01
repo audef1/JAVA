@@ -23,13 +23,13 @@ public abstract class Sensor extends Thread implements Serializable {
 		
 	}
 	
-	public abstract void getValue();
+	public abstract void addValues();
 	public abstract String toString();
 	
 	public synchronized void run(){
 		while (on){
 			setTimestamp();
-			getValue();
+			addValues();
 			sendValue();
 			cleanup();
 			try {
@@ -75,6 +75,10 @@ public abstract class Sensor extends Thread implements Serializable {
 	
 	public void setInterval(int interval){
 		this.interval = interval;
+	}
+	
+	public ArrayList<Object> getValues(){
+		return values;
 	}
 	
 }

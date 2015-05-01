@@ -18,17 +18,26 @@ public class TempSensor extends Sensor{
 	}
 
 	@Override
-	public void getValue() {
+	public void addValues() {
 		Point p = MouseInfo.getPointerInfo().getLocation();
 		values.add(p.x);
+		values.add(p.y);
 		//testhalber mit Mausposition
 		//connect over bluetooth to sensor with sensorID and get value 
+	}
+	
+	public int getX(){
+		return (int) values.get(0);
+	}
+	
+	public int getY(){
+		return (int) values.get(1);
 	}
 
 	@Override
 	public String toString() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		String date = df.format(new Date(getTimestamp()));
-		return date + " - " + getSourceID() + ": " + values.get(0) + ".";
+		return date + " - " + getSourceID() + ": " + values.get(0) + " | " + values.get(1) +" .";
 	}
 }
