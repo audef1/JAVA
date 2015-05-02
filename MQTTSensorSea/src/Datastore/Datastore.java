@@ -1,11 +1,13 @@
 package Datastore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import Sensors.Sensor;
 
 public class Datastore {
-
+	
 	private ArrayList<Sensor> datastore = new ArrayList<Sensor>();
 	
 	public Datastore(){
@@ -13,6 +15,9 @@ public class Datastore {
 	}
 	
 	public void add(Sensor s){
+		String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+		if (time.equals("00:00:00"))
+			export();
 		datastore.add(s);
 	}
 	

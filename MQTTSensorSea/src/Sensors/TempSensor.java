@@ -7,9 +7,10 @@ import java.util.Date;
 
 import Publisher.Publisher;
 
-@SuppressWarnings("serial")
 public class TempSensor extends Sensor{
 	
+	private static final long serialVersionUID = 1L;
+
 	public TempSensor(){}
 	
 	public TempSensor(String id, Publisher p){
@@ -23,7 +24,7 @@ public class TempSensor extends Sensor{
 		values.add(p.x);
 		values.add(p.y);
 		//testhalber mit Mausposition
-		//connect over bluetooth to sensor with sensorID and get value 
+		//connect over bluetooth to sensor and get value 
 	}
 	
 	public int getX(){

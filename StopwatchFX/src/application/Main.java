@@ -51,7 +51,9 @@ public class Main extends Application {
 			btnStart.setMinWidth(100);
 			btnStart.setPadding(new Insets(10, 10, 10, 10));
 			btnStop.setMinWidth(100);
+			btnStop.setPadding(new Insets(10, 10, 10, 10));
 			btnReset.setMinWidth(100);
+			btnReset.setPadding(new Insets(10, 10, 10, 10));
 			
 			hbcenter.setMargin(btnStart,new Insets(0, 10, 0, 0));
 			hbcenter.setMargin(btnStop,new Insets(0, 10, 0, 0));
@@ -67,11 +69,11 @@ public class Main extends Application {
 			hbcenter.setMinHeight(50);
 			hbbottom.setMinHeight(20);
 			
-			hbtop.setPrefHeight(80);
+			hbtop.setPrefHeight(200);
 			hbcenter.setPrefHeight(50);
 			hbbottom.setPrefHeight(20);
 			
-			hbtop.setMaxHeight(80);
+			hbtop.setMaxHeight(400);
 			hbcenter.setMaxHeight(50);
 			hbbottom.setMaxHeight(20);
 			
