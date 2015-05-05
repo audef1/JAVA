@@ -3,7 +3,6 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
@@ -11,6 +10,7 @@ public class Main extends Application {
 			Stopwatch s = new Stopwatch();
 			Timer t = new Timer();
 			t.attach(s);
+			s.attach(t);
 						
 			primaryStage.setTitle("StopwatchFX");
 			s.getScene().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
