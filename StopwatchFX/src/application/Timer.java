@@ -3,6 +3,8 @@ package application;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javafx.application.Platform;
+
 public class Timer implements Runnable{
 
 	private Stopwatch stopwatch;
@@ -12,8 +14,8 @@ public class Timer implements Runnable{
 	private long starttime;
 	private SimpleDateFormat df = new SimpleDateFormat("mm:ss.SS");
 	
-	public Timer(){
-
+	public Timer(Stopwatch s){
+		this.stopwatch = s;
 	}
 
 	public void attach(Stopwatch s){
@@ -34,15 +36,20 @@ public class Timer implements Runnable{
 	
 	@Override
 	public void run() {
+		isRunning = true;
+		starttime = new Date().getTime();
 		while (isRunning){
-			try {
-				time = System.currentTimeMillis() - starttime;
-				stopwatch.update();
-				wait(10);
-			} catch (InterruptedException e) {
-				isRunning = false;
-				e.printStackTrace();
-			}
+				Platform.runLater(()->{
+					time = System.currentTimeMillis() - starttime;
+					stopwatch.update();
+					try {
+						Thread.sleep(100);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.out.println(getTimeString());
+				});
 		}
 	}
 	
@@ -53,12 +60,6 @@ public class Timer implements Runnable{
 	public void reset(){
 		time = 0;
 		starttime = new Date().getTime();
-	}
-	
-	public void start(){
-		isRunning = true;
-		starttime = new Date().getTime();
-		run();
 	}
 
 }

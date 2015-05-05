@@ -1,5 +1,6 @@
 package application;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -27,7 +28,7 @@ public class Stopwatch extends BorderPane {
 	private Label lblTime = new Label("Time: 00:00:00");
 	private Label lblStatus = new Label("Status");
 	
-	private Timer timer;
+	private Timer timer = new Timer(this);
 	private long time = 0;
 	
 	public Stopwatch(){
@@ -68,15 +69,14 @@ public class Stopwatch extends BorderPane {
 		btnStop.setDisable(true);
 		
 		//adding handlers
-		btnStart.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					btnStart.setDisable(true);
-					btnStop.setDisable(false);
-					btnReset.setDisable(false);
-					timer.start();
-				}
-			});
+		btnStart.setOnAction((event)->{
+			btnStart.setDisable(true);
+			btnStop.setDisable(false);
+			btnReset.setDisable(false);
+			Thread thread = new Thread(timer);
+			thread.start();
+		});
+		
 		btnStop.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -93,12 +93,8 @@ public class Stopwatch extends BorderPane {
 
 	}
 	
-	public void update(){		
+	public void update(){
 		lblTime.setText("Time: " + timer.getTimeString());
-	}
-
-	public void attach(Timer t) {
-		this.timer = t;
 	}
 
 }

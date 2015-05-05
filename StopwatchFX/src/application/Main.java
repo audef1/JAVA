@@ -8,9 +8,6 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Stopwatch s = new Stopwatch();
-			Timer t = new Timer();
-			t.attach(s);
-			s.attach(t);
 						
 			primaryStage.setTitle("StopwatchFX");
 			s.getScene().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
