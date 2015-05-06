@@ -12,16 +12,12 @@ public class Timer implements Runnable{
 	private boolean isRunning;
 	
 	private long starttime;
-	private SimpleDateFormat df = new SimpleDateFormat("mm:ss.SS");
+	private SimpleDateFormat df = new SimpleDateFormat("mm:ss:S");
 	
 	public Timer(Stopwatch s){
 		this.stopwatch = s;
 	}
 
-	public void attach(Stopwatch s){
-		this.stopwatch = s;
-	}
-	
 	public double getTime(){
 		return Double.parseDouble(df.format(new Date((long) time)));
 	}
@@ -39,19 +35,22 @@ public class Timer implements Runnable{
 		isRunning = true;
 		starttime = new Date().getTime();
 		while (isRunning){
-				Platform.runLater(()->{
-					time = System.currentTimeMillis() - starttime;
-					stopwatch.update();
-					try {
-						Thread.sleep(100);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					System.out.println(getTimeString());
-				});
+			time = System.currentTimeMillis() - starttime;
+			
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Platform.runLater(() -> {
+				stopwatch.update();
+				//System.out.println(getTimeString());
+			});
+
 		}
-	}
+	};
 	
 	public void stop(){
 		isRunning = false;

@@ -26,10 +26,9 @@ public class Stopwatch extends BorderPane {
 	private Button btnReset = new Button("Reset");
 	
 	private Label lblTime = new Label("Time: 00:00:00");
-	private Label lblStatus = new Label("Status");
+	private Label lblStatus = new Label("");
 	
 	private Timer timer = new Timer(this);
-	private long time = 0;
 	
 	public Stopwatch(){
 		this.setCenter(hbcenter);
@@ -69,24 +68,41 @@ public class Stopwatch extends BorderPane {
 		btnStop.setDisable(true);
 		
 		//adding handlers
-		btnStart.setOnAction((event)->{
-			btnStart.setDisable(true);
-			btnStop.setDisable(false);
-			btnReset.setDisable(false);
-			Thread thread = new Thread(timer);
-			thread.start();
+		btnStart.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Platform.runLater(() -> {
+					btnStart.setDisable(true);
+					btnStop.setDisable(false);
+					btnReset.setDisable(false);
+					lblStatus.setText("Running");
+					lblStatus.setStyle("-fx-text-fill: green;");
+					Thread t = new Thread(timer);
+					t.start();
+				});
+			}
 		});
-		
+
 		btnStop.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
 					timer.stop();
+					btnStop.setDisable(true);
+					lblStatus.setText("Stopped");
+					lblStatus.setStyle("-fx-text-fill: red;");
 					btnStart.setDisable(false);
 				}
 			});
 		btnReset.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
+					lblStatus.setText("Reset");
+					lblStatus.setStyle("-fx-text-fill: black;");
+					if (btnStart.isDisable()){
+						lblStatus.setText("Running");
+						lblStatus.setStyle("-fx-text-fill: green;");
+					}
+					lblTime.setText("Time: 00:00:00");
 					timer.reset();
 				}
 			});
