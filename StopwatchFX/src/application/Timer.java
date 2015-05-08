@@ -48,7 +48,6 @@ public class Timer implements Runnable{
 				stopwatch.update();
 				//System.out.println(getTimeString());
 			});
-
 		}
 	};
 	
@@ -59,7 +58,7 @@ public class Timer implements Runnable{
 	public void reset(){
 		time = 0;
 		elapsed = 0;
-		inittime = 0;
+		inittime = new Date().getTime();
 	}
 
 }
