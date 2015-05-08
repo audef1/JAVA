@@ -8,10 +8,11 @@ import javafx.application.Platform;
 public class Timer implements Runnable{
 
 	private Stopwatch stopwatch;
-	private double time;
 	private boolean isRunning;
 	
-	private long starttime;
+	private double time;
+	private long inittime;
+	private long elapsed;
 	private SimpleDateFormat df = new SimpleDateFormat("mm:ss:S");
 	
 	public Timer(Stopwatch s){
@@ -19,11 +20,11 @@ public class Timer implements Runnable{
 	}
 
 	public double getTime(){
-		return Double.parseDouble(df.format(new Date((long) time)));
+		return Double.parseDouble(df.format(new Date((long)time + elapsed)));
 	}
 	
 	public String getTimeString(){
-		return df.format(new Date((long) time));
+		return df.format(new Date((long)time + elapsed));
 	}
 	
 	public boolean isRunning(){
@@ -33,10 +34,9 @@ public class Timer implements Runnable{
 	@Override
 	public void run() {
 		isRunning = true;
-		starttime = new Date().getTime();
+		inittime = new Date().getTime() - elapsed;
 		while (isRunning){
-			time = System.currentTimeMillis() - starttime;
-			
+			elapsed = System.currentTimeMillis() - inittime;
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
@@ -53,12 +53,13 @@ public class Timer implements Runnable{
 	};
 	
 	public void stop(){
-		isRunning = false;
+		isRunning = false;	
 	}
 	
 	public void reset(){
 		time = 0;
-		starttime = new Date().getTime();
+		elapsed = 0;
+		inittime = 0;
 	}
 
 }
