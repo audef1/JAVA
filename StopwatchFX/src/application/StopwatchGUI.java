@@ -1,5 +1,9 @@
 package application;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import Controller.TimeController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,12 +12,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class Stopwatch extends BorderPane {
+public class StopwatchGUI extends BorderPane implements Observer {
 
 	private Scene scene = new Scene(this,350,180);
 	
@@ -28,9 +31,12 @@ public class Stopwatch extends BorderPane {
 	private Label lblTime = new Label("Time: 00:00:00");
 	private Label lblStatus = new Label("");
 	
-	private Timer timer = new Timer(this);
+	private TimeController tc;
 	
-	public Stopwatch(){
+	public StopwatchGUI(TimeController tc){
+		
+		this.tc = tc;
+		
 		this.setCenter(hbcenter);
 		this.setBottom(vbbottom);
 		vbbottom.getChildren().add(hbbottom);
@@ -48,7 +54,6 @@ public class Stopwatch extends BorderPane {
 		
 		hbbottom.setMargin(btnStart,new Insets(0, 10, 0, 0));
 		hbbottom.setMargin(btnStop,new Insets(0, 10, 0, 0));
-		hbbottom.setMargin(btnReset,new Insets(0, 10, 0, 0));
 		
 		this.setMargin(hbcenter, new Insets(10, 10, 10, 10));
 		this.setMargin(vbbottom, new Insets(10, 10, 10, 10));
@@ -64,53 +69,59 @@ public class Stopwatch extends BorderPane {
 		hbbottom.setAlignment(Pos.CENTER);
 		vbbottom.setAlignment(Pos.BOTTOM_LEFT);
 		
-		btnReset.setDisable(true);
 		btnStop.setDisable(true);
+		
+		tc.getTimer().addObserver(this);
 		
 		//adding handlers
 		btnStart.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Platform.runLater(() -> {
-					btnStart.setDisable(true);
-					btnStop.setDisable(false);
-					btnReset.setDisable(false);
-					lblStatus.setText("Running");
-					lblStatus.setStyle("-fx-text-fill: green;");
-					Thread t = new Thread(timer);
-					t.start();
-				});
+				tc.start();
 			}
 		});
 
 		btnStop.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					timer.stop();
-					btnStop.setDisable(true);
-					lblStatus.setText("Stopped");
-					lblStatus.setStyle("-fx-text-fill: red;");
-					btnStart.setDisable(false);
+					tc.stop();
 				}
 			});
 		btnReset.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					lblStatus.setText("Reset");
-					lblStatus.setStyle("-fx-text-fill: black;");
-					if (btnStart.isDisable()){
-						lblStatus.setText("Running");
-						lblStatus.setStyle("-fx-text-fill: green;");
-					}
-					lblTime.setText("Time: 00:00:00");
-					timer.reset();
+					tc.reset();
 				}
 			});
-
 	}
-	
-	public void update(){
-		lblTime.setText("Time: " + timer.getTimeString());
+
+	@Override
+	public void update(Observable o, Object arg) {
+		Platform.runLater(() -> {
+			
+			btnStart.setDisable(tc.getTimer().isRunning());
+			btnStop.setDisable(!tc.getTimer().isRunning());
+			
+			//fast korrekt
+			if (btnStop.isDisable() && !tc.getTimer().isRunning()){
+				btnReset.setDisable(tc.getTimer().isReset());
+			}
+				
+			if (tc.getTimer().isRunning()){
+				lblStatus.setText("Running");
+				lblStatus.setStyle("-fx-text-fill: green;");
+			}
+			else if (!tc.getTimer().isRunning()){
+				lblStatus.setText("Stopped");
+				lblStatus.setStyle("-fx-text-fill: red;");
+				if (tc.getTimer().isReset()){
+					lblStatus.setText("Reset");
+					lblStatus.setStyle("-fx-text-fill: black;");
+				}
+			}
+			
+			lblTime.setText("Time: " + tc.getTimer().getTimeString());
+		});
 	}
 
 }

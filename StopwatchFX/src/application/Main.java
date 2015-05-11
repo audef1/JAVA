@@ -1,5 +1,6 @@
 package application;
 	
+import Controller.TimeController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -7,8 +8,11 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Stopwatch s = new Stopwatch();
-						
+			
+			Timer t = new Timer();
+			TimeController tc = new TimeController(t);
+			StopwatchGUI s = new StopwatchGUI(tc);
+			
 			primaryStage.setTitle("StopwatchFX");
 			s.getScene().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(s.getScene());

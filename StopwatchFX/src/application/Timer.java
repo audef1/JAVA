@@ -2,21 +2,23 @@ package application;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Observable;
 
 import javafx.application.Platform;
 
-public class Timer implements Runnable{
+public class Timer extends Observable implements Runnable{
 
-	private Stopwatch stopwatch;
+	private StopwatchGUI gui;
 	private boolean isRunning;
+	private boolean isReset;
 	
 	private double time;
 	private long inittime;
 	private long elapsed;
-	private SimpleDateFormat df = new SimpleDateFormat("mm:ss:S");
+	private SimpleDateFormat df = new SimpleDateFormat("mm:ss:SS");
 	
-	public Timer(Stopwatch s){
-		this.stopwatch = s;
+	public Timer(){
+		
 	}
 
 	public double getTime(){
@@ -31,6 +33,10 @@ public class Timer implements Runnable{
 		return isRunning;
 	}
 	
+	public boolean isReset(){
+		return isReset;
+	}
+	
 	@Override
 	public void run() {
 		isRunning = true;
@@ -40,25 +46,38 @@ public class Timer implements Runnable{
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				isRunning = false;
 				e.printStackTrace();
-			}
+			}	
 			
-			Platform.runLater(() -> {
-				stopwatch.update();
-				//System.out.println(getTimeString());
-			});
+			//update the gui via notifications to the observers
+			this.setChanged();
+			this.notifyObservers();
 		}
 	};
 	
+	public void start(){
+		Thread t = new Thread(this);
+		t.setDaemon(false);
+		t.start();
+		isReset = false;
+		this.setChanged();
+		this.notifyObservers();
+	}
+	
 	public void stop(){
-		isRunning = false;	
+		isRunning = false;
+		this.setChanged();
+		this.notifyObservers();
 	}
 	
 	public void reset(){
+		isReset = true;
 		time = 0;
 		elapsed = 0;
 		inittime = new Date().getTime();
+		this.setChanged();
+		this.notifyObservers();
 	}
 
 }
