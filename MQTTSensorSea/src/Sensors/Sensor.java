@@ -5,23 +5,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import Publisher.Publisher;
 
 public abstract class Sensor extends Thread implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private long timestamp;
+	private String sourceID;
+	private transient Publisher publisher;
+	private transient boolean on = true;
+	private transient int interval = 1000;
 	
-	protected long timestamp;
-	protected String sourceID;
-	protected transient Publisher publisher;
-	protected transient boolean on = true;
-	protected transient int interval = 1000;
+	@XmlElement(name ="value")
+	private ArrayList<Object> values = new ArrayList<Object>();
 	
-	protected ArrayList<Object> values = new ArrayList<Object>();
-	
-	public Sensor(){
-		
-	}
+	public Sensor(){}
 	
 	public abstract void addValues();
 	public abstract String toString();
@@ -35,8 +40,9 @@ public abstract class Sensor extends Thread implements Serializable {
 			try {
 				wait(interval);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 				on = false;
+				System.out.println("Sensor " + sourceID + " has been shutdown due to an error.");
+				e.printStackTrace();
 			}
 		}
 	}

@@ -20,7 +20,7 @@ public class Subscriber extends Thread {
 	private Broker broker;
 	private Serialiser ser = new Serialiser();
 	private boolean on = true;
-	private boolean notify = false;
+	private boolean sysout = false;
 	
 	public Subscriber(Broker broker, Datastore datastore){
 		this.broker = broker;
@@ -43,7 +43,7 @@ public class Subscriber extends Thread {
 			    	@Override
 			    	public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException{
 					   	Sensor s = (Sensor) ser.deserialize(message.getPayload());
-					   	if (notify){
+					   	if (sysout){
 					   		System.out.println("From " + string + ": " + s );
 					   	}
 					   	datastore.add(s);
@@ -64,25 +64,25 @@ public class Subscriber extends Thread {
 	
 	public void subscribe(String topic){
 		if (topics.contains(topic)){
-			if (notify){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
+			if (sysout){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
 		}
 		else{
 			topics.add(topic);
-			if (notify){System.out.println("Subscribed to the topic " + topic + ".");}else{};
+			if (sysout){System.out.println("Subscribed to the topic " + topic + ".");}else{};
 		}
 	}
 	
 	public void unsubscribe(String topic){
 		if (topics.contains(topic)){
 			topics.remove(topics.indexOf(topic));
-			if (notify){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
+			if (sysout){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 		}
 		else
-			if (notify){System.out.println("No such topic to unsubscribe from.");}else{};
+			if (sysout){System.out.println("No such topic to unsubscribe from.");}else{};
 	}
 	
-	public void setNotify(boolean notify){
-		this.notify = notify;
+	public void setSysout(boolean sysout){
+		this.sysout = sysout;
 	}
 
 }

@@ -19,19 +19,21 @@ public class Main {
 		
 		Publisher pub = new Publisher(bro);
 		pub.addTopic("test");
-		pub.setNotify(false);
+		pub.setSysout(false);
 
 		Subscriber sub = new Subscriber(bro, store);
 		sub.subscribe("test");
-		sub.setNotify(true);
+		sub.setSysout(true);
 		sub.start();
 		
-		Sensor sen = new TempSensor("Wohnzimmer",pub);
-		sen.setInterval(500);
-		sen.start();
+		Sensor sen1 = new TempSensor("Wohnzimmer",pub);
+		sen1.setInterval(5000);
+		sen1.setDaemon(false);
+		sen1.start();
 		
-		Sensor t = new LightSensor("Schlafzimmer",pub);
-		t.setInterval(10000);
-		t.start();
+		Sensor sen2 = new LightSensor("Schlafzimmer",pub);
+		sen2.setInterval(10000);
+		sen2.setDaemon(false);
+		sen2.start();
 	}
 }
