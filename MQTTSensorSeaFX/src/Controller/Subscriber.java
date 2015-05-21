@@ -1,4 +1,4 @@
-package Subscriber;
+package Controller;
 
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
@@ -8,31 +8,27 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import application.Serialiser;
-import Broker.Broker;
-import Datastore.Datastore;
+import GUI.SubscriberGUI;
+import Helpers.Serialiser;
+import Model.Datastore;
 import Sensors.Sensor;
 
 public class Subscriber extends Thread {
 	
 	private Datastore datastore;
 	private ArrayList<String> topics = new ArrayList<String>();
-	private Broker broker;
+	private Broker broker = new Broker();
 	private Serialiser ser = new Serialiser();
-	private boolean on = true;
-	private boolean notify = false;
+	private boolean on = false;
+	private boolean sysout = false;
 	
-	public Subscriber(Broker broker, Datastore datastore){
-		this.broker = broker;
-		this.datastore = datastore;
+	public Subscriber(){
+		this.setDaemon(false);
+		this.start();
 	}
 	
 	public synchronized void run(){
-		try {
-			for (String topic:topics){
-				broker.getClient().subscribe(topic);
-			}
-			
+		if (broker.isConnected()){
 			while(on){
 				broker.getClient().setCallback(new MqttCallback() {	
 			    	@Override
@@ -43,7 +39,7 @@ public class Subscriber extends Thread {
 			    	@Override
 			    	public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException{
 					   	Sensor s = (Sensor) ser.deserialize(message.getPayload());
-					   	if (notify){
+					   	if (sysout){
 					   		System.out.println("From " + string + ": " + s );
 					   	}
 					   	datastore.add(s);
@@ -55,34 +51,50 @@ public class Subscriber extends Thread {
 			    	}
 			    });
 			}
-		} catch (MqttException e) {
-			on = false;
-			broker.disconnect();
-			e.printStackTrace();
 		}
 	}
 	
 	public void subscribe(String topic){
-		if (topics.contains(topic)){
-			if (notify){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
-		}
-		else{
-			topics.add(topic);
-			if (notify){System.out.println("Subscribed to the topic " + topic + ".");}else{};
+		if (broker.isConnected()){
+			if (topics.contains(topic)){
+				if (sysout){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
+				on = true;
+			}
+			else{
+				topics.add(topic);
+				try {
+					broker.getClient().subscribe(topic);
+				} catch (MqttException e) {
+					e.printStackTrace();
+				}
+				if (sysout){System.out.println("Subscribed to the topic " + topic + ".");}else{};
+			}
 		}
 	}
 	
 	public void unsubscribe(String topic){
 		if (topics.contains(topic)){
 			topics.remove(topics.indexOf(topic));
-			if (notify){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
+			try {
+				broker.getClient().unsubscribe(topic);
+			} catch (MqttException e) {
+				e.printStackTrace();
+			}
+			if (sysout){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 		}
 		else
-			if (notify){System.out.println("No such topic to unsubscribe from.");}else{};
+			if (sysout){System.out.println("No such topic to unsubscribe from.");}else{};
 	}
 	
-	public void setNotify(boolean notify){
-		this.notify = notify;
+	public void setBroker(Broker broker){
+		this.broker = broker;
 	}
-
+	
+	public void setDatastore(Datastore datastore){
+		this.datastore = datastore;
+	}
+	
+	public void setSysout(boolean sysout){
+		this.sysout = sysout;
+	}
 }

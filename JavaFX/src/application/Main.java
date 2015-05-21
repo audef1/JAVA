@@ -1,6 +1,8 @@
 package application;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -20,27 +22,27 @@ public class Main extends Application {
         yAxis.setLabel("Temperatur");
         
         //creating the chart
-        final LineChart<Number,Number> lineChart = 
-                new LineChart<Number,Number>(xAxis,yAxis);
-                
+        final LineChart<Number,Number> lineChart = new LineChart<Number,Number>(xAxis,yAxis);
+        ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();     
         lineChart.setTitle("Temperatur Wohnzimmer");
+        
         //defining a series
-        XYChart.Series series = new XYChart.Series();
+        XYChart.Series series = new XYChart.Series(data);
         series.setName("Sensor 1");
         
         //populating the series with data
-        series.getData().add(new XYChart.Data(1, 23));
-        series.getData().add(new XYChart.Data(2, 14));
-        series.getData().add(new XYChart.Data(3, 15));
-        series.getData().add(new XYChart.Data(4, 24));
-        series.getData().add(new XYChart.Data(5, 34));
-        series.getData().add(new XYChart.Data(6, 36));
-        series.getData().add(new XYChart.Data(7, 22));
-        series.getData().add(new XYChart.Data(8, 45));
-        series.getData().add(new XYChart.Data(9, 43));
-        series.getData().add(new XYChart.Data(10, 17));
-        series.getData().add(new XYChart.Data(11, 29));
-        series.getData().add(new XYChart.Data(12, 25));
+        data.add(new XYChart.Data(1, 23));
+        data.add(new XYChart.Data(2, 14));
+        data.add(new XYChart.Data(3, 15));
+        data.add(new XYChart.Data(4, 24));
+        data.add(new XYChart.Data(5, 34));
+        data.add(new XYChart.Data(6, 36));
+        data.add(new XYChart.Data(7, 22));
+        data.add(new XYChart.Data(8, 45));
+        data.add(new XYChart.Data(9, 43));
+        data.add(new XYChart.Data(10, 17));
+        data.add(new XYChart.Data(11, 29));
+        data.add(new XYChart.Data(12, 25));
         
         Scene scene  = new Scene(lineChart);
         lineChart.getData().add(series);        

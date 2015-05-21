@@ -15,10 +15,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class StopwatchGUI extends BorderPane implements Observer {
-
-	private Scene scene = new Scene(this,350,180);
+public class StopwatchGUI extends Stage implements Observer {
+	
+	private BorderPane bp = new BorderPane();
 	
 	private HBox hbcenter = new HBox();
 	private VBox vbbottom = new VBox();
@@ -32,13 +33,15 @@ public class StopwatchGUI extends BorderPane implements Observer {
 	private Label lblStatus = new Label("");
 	
 	private TimeController tc;
-	
-	public StopwatchGUI(TimeController tc){
+	private Timer t;
+
+	public StopwatchGUI(TimeController tc, Timer t){
 		
 		this.tc = tc;
-		
-		this.setCenter(hbcenter);
-		this.setBottom(vbbottom);
+		this.t = t;
+
+		bp.setCenter(hbcenter);
+		bp.setBottom(vbbottom);
 		vbbottom.getChildren().add(hbbottom);
 		
 		hbcenter.getChildren().add(lblTime);
@@ -55,9 +58,9 @@ public class StopwatchGUI extends BorderPane implements Observer {
 		hbbottom.setMargin(btnStart,new Insets(0, 10, 0, 0));
 		hbbottom.setMargin(btnStop,new Insets(0, 10, 0, 0));
 		
-		this.setMargin(hbcenter, new Insets(10, 10, 10, 10));
-		this.setMargin(vbbottom, new Insets(10, 10, 10, 10));
-		this.setMargin(hbbottom, new Insets(0, 0, 20, 10));
+		bp.setMargin(hbcenter, new Insets(10, 10, 10, 10));
+		bp.setMargin(vbbottom, new Insets(10, 10, 10, 10));
+		bp.setMargin(hbbottom, new Insets(0, 0, 20, 10));
 		vbbottom.setMargin(lblStatus, new Insets(15, 0, 0, 0));
 		hbcenter.setStyle("-fx-background-color: #eee; -fx-border-color:black;");
 
@@ -71,7 +74,7 @@ public class StopwatchGUI extends BorderPane implements Observer {
 		
 		btnStop.setDisable(true);
 		
-		tc.getTimer().addObserver(this);
+		t.addObserver(this);
 		
 		//adding handlers
 		btnStart.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
@@ -93,34 +96,39 @@ public class StopwatchGUI extends BorderPane implements Observer {
 					tc.reset();
 				}
 			});
+		
+		this.setTitle("StopwatchFX");
+		//this.getScene().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		this.setScene(new Scene(bp,350,150));
+		this.show();
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		Platform.runLater(() -> {
 			
-			btnStart.setDisable(tc.getTimer().isRunning());
-			btnStop.setDisable(!tc.getTimer().isRunning());
+			btnStart.setDisable(t.isRunning());
+			btnStop.setDisable(!t.isRunning());
 			
 			//fast korrekt
-			if (btnStop.isDisable() && !tc.getTimer().isRunning()){
-				btnReset.setDisable(tc.getTimer().isReset());
+			if (btnStop.isDisable() && !t.isRunning()){
+				btnReset.setDisable(t.isReset());
 			}
 				
-			if (tc.getTimer().isRunning()){
+			if (t.isRunning()){
 				lblStatus.setText("Running");
 				lblStatus.setStyle("-fx-text-fill: green;");
 			}
-			else if (!tc.getTimer().isRunning()){
+			else if (!t.isRunning()){
 				lblStatus.setText("Stopped");
 				lblStatus.setStyle("-fx-text-fill: red;");
-				if (tc.getTimer().isReset()){
+				if (t.isReset()){
 					lblStatus.setText("Reset");
 					lblStatus.setStyle("-fx-text-fill: black;");
 				}
 			}
 			
-			lblTime.setText("Time: " + tc.getTimer().getTimeString());
+			lblTime.setText("Time: " + t.getTimeString());
 		});
 	}
 

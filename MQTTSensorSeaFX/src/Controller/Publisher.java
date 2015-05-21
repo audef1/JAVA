@@ -1,4 +1,4 @@
-package Publisher;
+package Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,16 +7,15 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
+import Helpers.Serialiser;
 import Sensors.Sensor;
-import application.Serialiser;
-import Broker.Broker;
 
 public class Publisher {
 
 	private Broker broker;
 	private ArrayList<String> topics = new ArrayList<String>();
 	private Serialiser ser = new Serialiser();
-	private boolean notify = false;
+	private boolean sysout = false;
 	
 	public Publisher(Broker broker){
 		this.broker = broker;
@@ -32,7 +31,7 @@ public class Publisher {
 			try {
 				for (String topic:topics){
 					broker.getClient().publish(topic, message);
-					if (notify){System.out.println("Sensorvalue published to " + topic + "!");}else{};
+					if (sysout){System.out.println("Sensorvalue published to " + topic + "!");}else{};
 				}
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
@@ -46,13 +45,13 @@ public class Publisher {
 		}
 	}
 	
-	public void setNotify(boolean notify){
-		this.notify = notify;
+	public void setSysout(boolean sysout){
+		this.sysout = sysout;
 	}
 	
 	public void addTopic(String topic){
 			if (topics.contains(topic)){
-				if (notify){System.out.println("Topic is already in the distributionlist.");}else{};
+				if (sysout){System.out.println("Topic is already in the distributionlist.");}else{};
 			}
 			else
 			{
@@ -64,6 +63,6 @@ public class Publisher {
 		if (topics.contains(topic))
 				topics.remove(topics.indexOf(topic));
 		else
-			if (notify){System.out.println("No such topic to remove.");}else{};
+			if (sysout){System.out.println("No such topic to remove.");}else{};
 	}
 }

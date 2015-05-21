@@ -27,12 +27,12 @@ public class Main {
 		sub.start();
 		
 		Sensor sen1 = new TempSensor("Wohnzimmer",pub);
-		sen1.setInterval(5000);
+		sen1.setInterval(500);
 		sen1.setDaemon(false);
 		sen1.start();
 		
 		Sensor sen2 = new LightSensor("Schlafzimmer",pub);
-		sen2.setInterval(10000);
+		sen2.setInterval(500);
 		sen2.setDaemon(false);
 		sen2.start();
 	}

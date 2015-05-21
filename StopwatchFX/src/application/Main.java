@@ -6,17 +6,14 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage Stage) {
 		try {
-			
+
 			Timer t = new Timer();
 			TimeController tc = new TimeController(t);
-			StopwatchGUI s = new StopwatchGUI(tc);
-			
-			primaryStage.setTitle("StopwatchFX");
-			s.getScene().getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			primaryStage.setScene(s.getScene());
-			primaryStage.show();
+			StopwatchGUI s = new StopwatchGUI(tc, t);
+			StopwatchGUI sw = new StopwatchGUI(tc, t);
+			StopwatchGUI s2 = new StopwatchGUI(tc, t);
 			
 		} catch(Exception e) {
 			e.printStackTrace();

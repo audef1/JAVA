@@ -1,4 +1,4 @@
-package Broker;
+package Controller;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -6,10 +6,14 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class Broker {
 
-	private String clientID;
+	private String clientID = "undefined";
 	
 	private MqttClient client;
 	private MqttConnectOptions connOpt = new MqttConnectOptions();
+	
+	public Broker(){
+		
+	}
 	
 	public Broker(String clientID){
 		this.clientID = clientID;
@@ -94,7 +98,16 @@ public class Broker {
 	}
 	
 	public MqttClient getClient(){
+		if (client != null)
+			return client;
 		return client;
+	}
+	
+	public boolean isConnected(){
+		if (client == null)
+			return false;
+		else
+			return client.isConnected();	
 	}
 	
 }

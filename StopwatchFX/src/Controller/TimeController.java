@@ -22,8 +22,4 @@ public class TimeController {
 		this.timer.reset();
 	}
 	
-	public Timer getTimer(){
-		return timer;
-	}
-	
 }

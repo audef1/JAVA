@@ -1,4 +1,4 @@
-package Datastore;
+package Model;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import Application.XMLHelper;
+import Helpers.XMLHelper;
 import Sensors.Sensor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
