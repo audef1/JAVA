@@ -119,6 +119,10 @@ public class Subscriber extends Observable implements Runnable {
 		return broker;
 	}
 	
+	public ObservableList<String> getTopics(){
+		return topics;
+	}
+	
 	public void setDatastore(Datastore datastore){
 		this.datastore = datastore;
 	}

@@ -1,5 +1,9 @@
 package Controller;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,12 +11,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class FXMLSubController{
+public class FXMLSubController implements Observer{
     
 	private Subscriber sub;
 	
 	public FXMLSubController(Subscriber sub){
 		this.sub = sub;
+		this.sub.addObserver(this);
 	}
 	
 	@FXML
@@ -34,14 +39,13 @@ public class FXMLSubController{
     private TextField inputTopic;
     
     @FXML
-    private  PasswordField inputPass;
+    private PasswordField inputPass;
    
     @FXML
-    private  ListView listTopic;
+    private ListView<String> listTopic;
     
     @FXML
     void connect(ActionEvent event){
-    	
     	sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
     }
     
@@ -49,5 +53,12 @@ public class FXMLSubController{
     void addTopic(ActionEvent event){
     	sub.setSysout(true);
     	sub.subscribe(inputTopic.getText());
+    	
+    	listTopic.setItems(sub.getTopics());
     }
+    
+	@Override
+	public void update(Observable o, Object arg) {
+
+	}
 }

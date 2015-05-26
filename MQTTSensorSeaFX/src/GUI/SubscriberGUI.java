@@ -15,16 +15,9 @@ import javafx.stage.Stage;
 
 public class SubscriberGUI extends Stage implements Observer{
 
-	private Subscriber subscriber;
-	private Datastore datastore;
 	private FXMLLoader loader;
 	private FXMLSubController fxmlController;
-	private Scene scene;
-	
 	public SubscriberGUI(Subscriber sub, Datastore store) throws IOException{
-		this.subscriber = sub;
-		this.datastore = store;
-		
 		sub.addObserver(this);
 		store.addObserver(this);
 		
@@ -46,5 +39,6 @@ public class SubscriberGUI extends Stage implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		System.out.println("i got notified.");
+		
 	}
 }
