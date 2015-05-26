@@ -2,6 +2,10 @@ package Controller;
 
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.Observable;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -13,20 +17,28 @@ import Helpers.Serialiser;
 import Model.Datastore;
 import Sensors.Sensor;
 
-public class Subscriber extends Thread {
+public class Subscriber extends Observable implements Runnable {
 	
 	private Datastore datastore;
-	private ArrayList<String> topics = new ArrayList<String>();
+	private ObservableList<String> topics = FXCollections.observableArrayList();
 	private Broker broker = new Broker();
 	private Serialiser ser = new Serialiser();
 	private boolean on = false;
 	private boolean sysout = false;
-	
+	private String status = "";
+
 	public Subscriber(){
-		this.setDaemon(false);
 		this.start();
 	}
 	
+	private void start() {
+		Thread t = new Thread(this);
+		t.setDaemon(false);
+		t.start();
+		this.setChanged();
+		this.notifyObservers();
+	}
+
 	public synchronized void run(){
 		if (broker.isConnected()){
 			while(on){
@@ -44,12 +56,16 @@ public class Subscriber extends Thread {
 					   	}
 					   	datastore.add(s);
 				    }
-			
+			    	
 			    	@Override
 			    	public void deliveryComplete(IMqttDeliveryToken imdt) {
 			    		
 			    	}
+			    	
 			    });
+				
+		    	this.setChanged();
+		    	this.notifyObservers();
 			}
 		}
 	}
@@ -58,6 +74,7 @@ public class Subscriber extends Thread {
 		if (broker.isConnected()){
 			if (topics.contains(topic)){
 				if (sysout){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
+				status = "Already subscribed to the topic " + topic + ".";
 				on = true;
 			}
 			else{
@@ -68,7 +85,10 @@ public class Subscriber extends Thread {
 					e.printStackTrace();
 				}
 				if (sysout){System.out.println("Subscribed to the topic " + topic + ".");}else{};
+				status = "Subscribed to the topic " + topic + ".";
 			}
+	    	this.setChanged();
+	    	this.notifyObservers();
 		}
 	}
 	
@@ -81,13 +101,22 @@ public class Subscriber extends Thread {
 				e.printStackTrace();
 			}
 			if (sysout){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
+			status = "Unsubscribed from topic " + topic + ".";
 		}
-		else
-			if (sysout){System.out.println("No such topic to unsubscribe from.");}else{};
+		else{
+			if (sysout){System.out.println("No such topic to unsubscribe.");}else{};
+			status = "No such topic to unsubscribe.";
+		}
+    	this.setChanged();
+    	this.notifyObservers();
 	}
 	
 	public void setBroker(Broker broker){
 		this.broker = broker;
+	}
+	
+	public Broker getBroker() {
+		return broker;
 	}
 	
 	public void setDatastore(Datastore datastore){
@@ -97,4 +126,9 @@ public class Subscriber extends Thread {
 	public void setSysout(boolean sysout){
 		this.sysout = sysout;
 	}
+	
+	public String getStatus(){
+		return status;
+	}
+	
 }

@@ -6,6 +6,10 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Observable;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,13 +22,13 @@ import Sensors.Sensor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(namespace="http://ch.audef1.mqttsensorsea",name="datastore")
-public class Datastore {
+public class Datastore extends Observable{
 	
 	@XmlElement(name ="timestamp")
 	private long lastupdate = new Date().getTime();
 	
 	@XmlElement(name = "sensors")
-	private ArrayList<Sensor> datastore = new ArrayList<Sensor>();
+	private ObservableList<Sensor> datastore = FXCollections.observableArrayList();
 	
 	private int multiplicator = 1;
 	private int intervaltype = (1000*60*60*24); //day
@@ -51,7 +55,7 @@ public class Datastore {
 		datastore.add(s);
 	}
 	
-	public ArrayList<Sensor> getDatastore(){
+	public ObservableList<Sensor> getDatastore(){
 		return datastore;
 	}
 	
@@ -79,6 +83,6 @@ public class Datastore {
 		XMLHelper.saveInstance(os, this);
 		os.close();
 		
-		datastore = new ArrayList<Sensor>();
+		datastore.clear();
 	}
 }

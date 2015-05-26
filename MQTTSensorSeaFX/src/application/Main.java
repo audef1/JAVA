@@ -1,5 +1,7 @@
 package application;
 	
+import java.io.IOException;
+
 import Controller.Subscriber;
 import GUI.SubscriberGUI;
 import Model.Datastore;
@@ -12,7 +14,11 @@ public class Main extends Application {
 	public void start(Stage Stage) {
 		Datastore store = new Datastore();
 		Subscriber sub = new Subscriber();
-		SubscriberGUI gui = new SubscriberGUI(sub, store);
+		try {
+			SubscriberGUI gui = new SubscriberGUI(sub, store);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {

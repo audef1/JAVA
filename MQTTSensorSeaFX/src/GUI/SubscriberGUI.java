@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import Controller.Broker;
+import Controller.FXMLSubController;
 import Controller.Subscriber;
 import Model.Datastore;
 import javafx.fxml.FXMLLoader;
@@ -14,28 +15,36 @@ import javafx.stage.Stage;
 
 public class SubscriberGUI extends Stage implements Observer{
 
-	private Parent root;
 	private Subscriber subscriber;
 	private Datastore datastore;
+	private FXMLLoader loader;
+	private FXMLSubController fxmlController;
+	private Scene scene;
 	
-	public SubscriberGUI(Subscriber sub, Datastore store){
+	public SubscriberGUI(Subscriber sub, Datastore store) throws IOException{
 		this.subscriber = sub;
 		this.datastore = store;
 		
+		sub.addObserver(this);
+		store.addObserver(this);
+		
+		fxmlController = new FXMLSubController(sub);
+		loader = new FXMLLoader(getClass().getResource("/application/Subscriber.fxml"));
+		loader.setController(fxmlController);		
+		Scene scene;
+		
 		try {
-			root = FXMLLoader.load(getClass().getResource("/application/Subscriber.fxml"));
+			scene = new Scene(loader.load());
+			this.setScene(scene);
+			this.show();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
-		Scene scene = new Scene(root);
-		
-		this.setScene(scene);
-		this.show();
-		
+		}
+
 	}
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		
+		System.out.println("i got notified.");
 	}
 }

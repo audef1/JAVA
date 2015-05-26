@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FXMLSubController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -60,7 +60,7 @@
    <left>
       <BorderPane prefHeight="360.0" prefWidth="226.0" BorderPane.alignment="CENTER">
          <center>
-            <ListView prefHeight="325.0" prefWidth="229.0" BorderPane.alignment="CENTER" />
+            <ListView fx:id="listTopic" prefHeight="325.0" prefWidth="229.0" BorderPane.alignment="CENTER" />
          </center>
          <bottom>
             <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="226.0" BorderPane.alignment="CENTER">
@@ -70,7 +70,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="btnAddTopic" mnemonicParsing="false" onAction="#addtopic" prefHeight="26.0" prefWidth="57.0" text="Add">
+                  <Button fx:id="btnAddTopic" mnemonicParsing="false" onAction="#addTopic" prefHeight="26.0" prefWidth="57.0" text="Add">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>

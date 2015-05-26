@@ -19,12 +19,12 @@ public class Main {
 		
 		Publisher pub = new Publisher(bro);
 		pub.addTopic("test");
-		pub.setSysout(false);
+		pub.setSysout(true);
 
-		Subscriber sub = new Subscriber(bro, store);
-		sub.subscribe("test");
-		sub.setSysout(true);
-		sub.start();
+		//Subscriber sub = new Subscriber(bro, store);
+		//sub.subscribe("test");
+		//sub.setSysout(true);
+		//sub.start();
 		
 		Sensor sen1 = new TempSensor("Wohnzimmer",pub);
 		sen1.setInterval(500);

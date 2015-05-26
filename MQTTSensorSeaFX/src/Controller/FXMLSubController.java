@@ -3,11 +3,19 @@ package Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class FXMLSubController {
-    @FXML
+public class FXMLSubController{
+    
+	private Subscriber sub;
+	
+	public FXMLSubController(Subscriber sub){
+		this.sub = sub;
+	}
+	
+	@FXML
     private Button btnAddTopic;
     
     @FXML
@@ -29,14 +37,17 @@ public class FXMLSubController {
     private  PasswordField inputPass;
    
     @FXML
+    private  ListView listTopic;
+    
+    @FXML
     void connect(ActionEvent event){
-    	inputUser.setText("Connect");
+    	
+    	sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
     }
     
     @FXML
     void addTopic(ActionEvent event){
-    	
+    	sub.setSysout(true);
+    	sub.subscribe(inputTopic.getText());
     }
-    
-    
 }
