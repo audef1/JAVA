@@ -23,12 +23,12 @@ public class Subscriber extends Observable implements Runnable {
 	private ObservableList<String> topics = FXCollections.observableArrayList();
 	private Broker broker = new Broker();
 	private Serialiser ser = new Serialiser();
-	private boolean on = false;
+	private boolean on = true;
 	private boolean sysout = false;
 	private String status = "";
 
 	public Subscriber(){
-		
+		new Thread(this).run();
 	}
 
 	public synchronized void run(){

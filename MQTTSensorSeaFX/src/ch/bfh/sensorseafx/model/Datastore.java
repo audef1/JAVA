@@ -53,11 +53,12 @@ public class Datastore extends Observable{
 			}
 			lastupdate = new Date().getTime();
 		}
-			
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");	
 		
 		datastore.add(s);
-		series.getData().add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");	
+		TempDatastore.add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
+		
 		this.setChanged();
     	this.notifyObservers();
 	}

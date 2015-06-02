@@ -2,6 +2,10 @@ package ch.bfh.sensorseafx.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Observable;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -10,10 +14,10 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import ch.bfh.sensorseafx.helpers.Serialiser;
 import ch.bfh.sensorseafx.sensors.Sensor;
 
-public class Publisher {
+public class Publisher extends Observable{
 
-	private Broker broker;
-	private ArrayList<String> topics = new ArrayList<String>();
+	private Broker broker = new Broker();
+	private ObservableList<String> topics = FXCollections.observableArrayList();
 	private Serialiser ser = new Serialiser();
 	private boolean sysout = false;
 	
@@ -56,13 +60,27 @@ public class Publisher {
 			else
 			{
 				topics.add(topic);
+		    	this.setChanged();
+		    	this.notifyObservers();
 			}	
 	}
 	
 	public void removeTopic(String topic){
-		if (topics.contains(topic))
-				topics.remove(topics.indexOf(topic));
-		else
+		if (topics.contains(topic)){
+			topics.remove(topics.indexOf(topic));
+	    	this.setChanged();
+	    	this.notifyObservers();
+		}	
+		else{
 			if (sysout){System.out.println("No such topic to remove.");}else{};
+		}	
+	}
+	
+	public Broker getBroker(){
+		return broker;
+	}
+	
+	public ObservableList<String> getTopics(){
+		return topics;
 	}
 }
