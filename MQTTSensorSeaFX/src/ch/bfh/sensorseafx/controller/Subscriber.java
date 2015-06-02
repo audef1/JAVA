@@ -28,18 +28,11 @@ public class Subscriber extends Observable implements Runnable {
 	private String status = "";
 
 	public Subscriber(){
-		this.start();
-	}
-	
-	private void start() {
-		Thread t = new Thread(this);
-		t.setDaemon(false);
-		t.start();
-		this.setChanged();
-		this.notifyObservers();
+		
 	}
 
 	public synchronized void run(){
+	
 		if (broker.isConnected()){
 			while(on){
 				broker.getClient().setCallback(new MqttCallback() {	

@@ -3,11 +3,14 @@ package ch.bfh.sensorseafx.sensors;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+
 import javax.xml.bind.annotation.XmlElement;
+
 import ch.bfh.sensorseafx.controller.Publisher;
+import ch.bfh.sming.service.Txw51Service;
 
-public abstract class Sensor extends Thread implements Serializable {
-
+public abstract class Sensor extends Thread implements Serializable, Txw51Service{
+	
 	private static final long serialVersionUID = 1L;
 
 	private long timestamp;
@@ -25,6 +28,9 @@ public abstract class Sensor extends Thread implements Serializable {
 	public abstract String toString();
 	
 	public synchronized void run(){
+		
+		this.initialize("/dev/tty.usbmodem1");
+		
 		while (on){
 			setTimestamp();
 			addValues();
@@ -79,5 +85,5 @@ public abstract class Sensor extends Thread implements Serializable {
 	public ArrayList<Object> getValues(){
 		return values;
 	}
-	
+
 }

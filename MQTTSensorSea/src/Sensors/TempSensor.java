@@ -26,25 +26,15 @@ public class TempSensor extends Sensor{
 
 	@Override
 	public void addValues() {
-		Point p = MouseInfo.getPointerInfo().getLocation();
-		this.getValues().add(p.x);
-		this.getValues().add(p.y);
-		//testhalber mit Mausposition
-		//connect over bluetooth to sensor and get value 
-	}
-	
-	public int getX(){
-		return (int) this.getValues().get(0);
-	}
-	
-	public int getY(){
-		return (int) this.getValues().get(1);
+		//werte eines temperatursensors
+		this.getValues().add(1 + (int)(Math.random()*37)); 
 	}
 
 	@Override
 	public String toString() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		String date = df.format(new Date(getTimestamp()));
-		return date + " - " + getSourceID() + ": " + this.getValues().get(0) + " | " + this.getValues().get(1) +" .";
+		return date + " - " + getSourceID() + ": " + this.getValues().get(0) +" .";
 	}
+
 }

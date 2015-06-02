@@ -5,8 +5,10 @@ import java.util.Observer;
 
 import ch.bfh.sensorseafx.model.Datastore;
 import ch.bfh.sensorseafx.sensors.Sensor;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
@@ -28,6 +30,9 @@ public class FXMLSubController implements Observer{
 	@FXML
     private Button btnAddTopic;
     
+	@FXML
+    private Button btnRemoveTopic;
+	
     @FXML
     private Button btnQuickConnect;
     
@@ -51,18 +56,26 @@ public class FXMLSubController implements Observer{
     
    @FXML
    private TextArea outputConsole;
-    
+   
+   @FXML
+   private LineChart<Number,Number> linechartTemp;   
+   
     @FXML
     void connect(ActionEvent event){
     	sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
+    	//linechartTemp.getXAxis().setTickLabelsVisible(false);
+    	//linechartTemp.getXAxis().setTickMarkVisible(false);
     }
     
     @FXML
     void addTopic(ActionEvent event){
     	sub.setSysout(true);
     	sub.subscribe(inputTopic.getText());
-    	
-    	
+    }
+    
+    @FXML
+    void removeTopic(ActionEvent event){
+    	sub.unsubscribe(listTopic.getSelectionModel().getSelectedItem());
     }
     
 	@Override
@@ -71,13 +84,8 @@ public class FXMLSubController implements Observer{
 		if (o.equals(sub)){
 			listTopic.setItems(sub.getTopics());
 		}
+		linechartTemp.getData().clear();
+		linechartTemp.getData().add(store.getTempSeries());
 		
-		if (o.equals(store)){
-			String s = "";
-			for (Sensor sensor : store.getDatastore()){
-				s = sensor.toString() + "n/";
-			}	
-			outputConsole.setText(s);
-		}
 	}
 }

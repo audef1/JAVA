@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ch.bfh.sensorseafx.controller.Publisher;
+import ch.bfh.sming.service.Txw51Service;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "tempsensor")
@@ -22,29 +23,39 @@ public class TempSensor extends Sensor{
 	public TempSensor(String id, Publisher p){
 		this.setSourceID(id);
 		this.setPublisher(p);
+		this.initialize("/dev/tty.usbmodem1"); //connect to sming
+		this.listServices();
 	}
 
 	@Override
 	public void addValues() {
-		Point p = MouseInfo.getPointerInfo().getLocation();
-		this.getValues().add(p.x);
-		this.getValues().add(p.y);
-		//testhalber mit Mausposition
-		//connect over bluetooth to sensor and get value 
-	}
-	
-	public int getX(){
-		return (int) this.getValues().get(0);
-	}
-	
-	public int getY(){
-		return (int) this.getValues().get(1);
+		//werte eines temperatursensors
+		this.getValues().add(1 + (int)(Math.random()*37)); 
 	}
 
 	@Override
 	public String toString() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		String date = df.format(new Date(getTimestamp()));
-		return date + " - " + getSourceID() + ": " + this.getValues().get(0) + " | " + this.getValues().get(1) +" .";
+		return date + " - " + getSourceID() + ": " + this.getValues().get(0) +" .";
 	}
+
+	@Override
+	public void initialize(String serialPort) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void listServices() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void readAttribute(int handle) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

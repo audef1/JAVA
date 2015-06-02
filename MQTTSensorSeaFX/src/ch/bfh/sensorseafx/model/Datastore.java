@@ -9,6 +9,7 @@ import java.util.Observable;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,7 +28,9 @@ public class Datastore extends Observable{
 	private long lastupdate = new Date().getTime();
 	
 	@XmlElement(name = "sensors")
-	private ObservableList<Sensor> datastore = FXCollections.observableArrayList();
+	private ObservableList<Sensor> datastore = FXCollections.observableArrayList();	
+	private ObservableList<XYChart.Data<String, Number>> TempDatastore = FXCollections.observableArrayList();
+	private XYChart.Series<String, Number> series = new XYChart.Series(TempDatastore);
 	
 	private int multiplicator = 1;
 	private int intervaltype = (1000*60*60*24); //day
@@ -51,13 +54,12 @@ public class Datastore extends Observable{
 			lastupdate = new Date().getTime();
 		}
 			
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");	
+		
 		datastore.add(s);
+		series.getData().add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
 		this.setChanged();
     	this.notifyObservers();
-	}
-	
-	public ObservableList<Sensor> getDatastore(){
-		return datastore;
 	}
 	
 	public void setInterval(int multiplicator, char type){
@@ -86,4 +88,13 @@ public class Datastore extends Observable{
 		
 		datastore.clear();
 	}
+
+	public ObservableList<Sensor> getDatastore(){
+		return datastore;
+	}
+	
+	public XYChart.Series getTempSeries(){
+		return series;
+	}
+
 }
