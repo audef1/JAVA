@@ -35,19 +35,4 @@ public class LightSensor extends Sensor{
 		return date + " - " + getSourceID() + ": " + this.getValues().get(0) + " Lumen.";
 	}
 
-	@Override
-	public void initialize(String serialPort) {
-		this.initialize(serialPort);
-	}
-
-	@Override
-	public void listServices() {
-		this.listServices();
-	}
-
-	@Override
-	public void readAttribute(int handle) {
-		this.readAttribute(handle);
-	}
-
 }

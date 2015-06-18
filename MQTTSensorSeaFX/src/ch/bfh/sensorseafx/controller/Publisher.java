@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,8 +17,9 @@ import ch.bfh.sensorseafx.sensors.Sensor;
 
 public class Publisher extends Observable{
 
-	private Broker broker = new Broker();
+	private Broker broker = new Broker("publisher");
 	private ObservableList<String> topics = FXCollections.observableArrayList();
+	private ObservableList<Sensor> sensors = FXCollections.observableArrayList();
 	private Serialiser ser = new Serialiser();
 	private boolean sysout = false;
 	
@@ -73,6 +75,32 @@ public class Publisher extends Observable{
 		}	
 		else{
 			if (sysout){System.out.println("No such topic to remove.");}else{};
+		}	
+	}
+	
+	public void addSensor(Sensor sensor){
+		if (sensors.contains(sensor)){
+			if (sysout){System.out.println("Sensor was already added.");}else{};
+		}
+		else
+		{
+			sensors.add(sensor);
+			sensor.setInterval(60000);
+			sensor.setDaemon(false);
+			
+	    	this.setChanged();
+	    	this.notifyObservers();
+		}	
+	}
+	
+	public void removeSensor(Sensor sensor){
+		if (sensors.contains(sensor)){
+			sensors.remove(sensors.indexOf(sensor));
+	    	this.setChanged();
+	    	this.notifyObservers();
+		}	
+		else{
+			if (sysout){System.out.println("No such Sensor to remove.");}else{};
 		}	
 	}
 	

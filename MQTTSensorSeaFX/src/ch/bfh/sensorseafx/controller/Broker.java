@@ -1,10 +1,12 @@
 package ch.bfh.sensorseafx.controller;
 
+import java.util.Observable;
+
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class Broker {
+public class Broker extends Observable {
 
 	private String clientID = "undefined";
 	
@@ -29,6 +31,8 @@ public class Broker {
 	            	System.out.println("Connecting to broker: "+ host);
 				client.connect(connOpt);
 					System.out.println("Connected!");
+					this.setChanged();
+			    	this.notifyObservers();
 			}
 			else
 			{
@@ -49,6 +53,8 @@ public class Broker {
 	            System.out.println("Connecting to broker: "+ host);
 				client.connect(connOpt);
 				System.out.println("Connected!");
+				this.setChanged();
+		    	this.notifyObservers();
 			}
 			else
 			{
@@ -67,6 +73,8 @@ public class Broker {
 				connOpt.setCleanSession(false);
 				client.connect(connOpt);
 				System.out.println("Connected!");
+				this.setChanged();
+		    	this.notifyObservers();
 			}
 			else
 			{
@@ -83,6 +91,8 @@ public class Broker {
 			System.out.println("Connecting to broker: "+ host);
 			client.connect(connOpt);
 			System.out.println("Connected!");
+			this.setChanged();
+	    	this.notifyObservers();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -92,6 +102,9 @@ public class Broker {
 		try {
 			client.disconnect();
 			System.out.println("Disconnected!");
+			client = null;
+			this.setChanged();
+	    	this.notifyObservers();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -110,4 +123,7 @@ public class Broker {
 			return client.isConnected();	
 	}
 	
+	public void setClientID(String s){
+		this.clientID = s;
+	}
 }

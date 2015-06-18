@@ -21,7 +21,7 @@ public class Subscriber extends Observable implements Runnable {
 	
 	private Datastore datastore;
 	private ObservableList<String> topics = FXCollections.observableArrayList();
-	private Broker broker = new Broker();
+	private Broker broker = new Broker("subscriber");
 	private Serialiser ser = new Serialiser();
 	private boolean on = true;
 	private boolean sysout = false;
@@ -98,7 +98,7 @@ public class Subscriber extends Observable implements Runnable {
 		}
 		else{
 			if (sysout){System.out.println("No such topic to unsubscribe.");}else{};
-			status = "No such topic to unsubscribe.";
+			status = "No topic selected to unsubscribe.";
 		}
     	this.setChanged();
     	this.notifyObservers();

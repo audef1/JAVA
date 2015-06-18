@@ -29,6 +29,7 @@ public class Datastore extends Observable{
 	
 	@XmlElement(name = "sensors")
 	private ObservableList<Sensor> datastore = FXCollections.observableArrayList();	
+	
 	private ObservableList<XYChart.Data<String, Number>> TempDatastore = FXCollections.observableArrayList();
 	private XYChart.Series<String, Number> series = new XYChart.Series(TempDatastore);
 	
@@ -58,6 +59,7 @@ public class Datastore extends Observable{
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");	
 		TempDatastore.add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
+		series.setData(TempDatastore);
 		
 		this.setChanged();
     	this.notifyObservers();

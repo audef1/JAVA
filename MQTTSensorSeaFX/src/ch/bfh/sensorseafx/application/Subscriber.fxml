@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="353.0" prefWidth="834.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -66,17 +66,17 @@
          <bottom>
             <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="226.0" BorderPane.alignment="CENTER">
                <children>
-                  <TextField fx:id="inputTopic" prefHeight="26.0" prefWidth="127.0" promptText="Topic">
+                  <TextField fx:id="inputTopic" disable="true" prefHeight="26.0" prefWidth="127.0" promptText="Topic">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="btnAddTopic" mnemonicParsing="false" onAction="#addTopic" prefHeight="26.0" prefWidth="30.0" text="+">
+                  <Button fx:id="btnAddTopic" disable="true" mnemonicParsing="false" onAction="#addTopic" prefHeight="26.0" prefWidth="30.0" text="+">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnRemoveTopic" mnemonicParsing="false" onAction="#removeTopic" prefHeight="26.0" prefWidth="30.0" text="-" textAlignment="CENTER">
+                  <Button fx:id="btnRemoveTopic" disable="true" mnemonicParsing="false" onAction="#removeTopic" prefHeight="26.0" prefWidth="30.0" text="-" textAlignment="CENTER">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -90,7 +90,7 @@
       </BorderPane>
    </left>
    <center>
-      <LineChart fx:id="linechartTemp" BorderPane.alignment="CENTER">
+      <LineChart fx:id="linechartTemp" prefHeight="313.0" prefWidth="464.0" BorderPane.alignment="CENTER">
         <xAxis>
           <CategoryAxis label="Zeit" side="BOTTOM" />
         </xAxis>
@@ -99,4 +99,7 @@
         </yAxis>
       </LineChart>
    </center>
+   <right>
+      <VBox prefHeight="313.0" prefWidth="186.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>

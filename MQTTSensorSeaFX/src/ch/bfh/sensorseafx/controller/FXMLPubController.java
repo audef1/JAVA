@@ -60,15 +60,25 @@ public class FXMLPubController implements Observer {
    
     @FXML
     void connect(ActionEvent event){
-    	pub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
-    	//linechartTemp.getXAxis().setTickLabelsVisible(false);
-    	//linechartTemp.getXAxis().setTickMarkVisible(false);
+    	if (pub.getBroker().isConnected()){
+    		pub.getBroker().disconnect();
+    	}
+    	else{
+    		pub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
+        	//linechartTemp.getXAxis().setTickLabelsVisible(false);
+        	//linechartTemp.getXAxis().setTickMarkVisible(false);
+    	}
     }
     
     @FXML
     void addTopic(ActionEvent event){
-    	pub.setSysout(true);
-    	pub.addTopic(inputTopic.getText());
+    	if (inputTopic.getText().equals("")){
+    		System.out.println("no topic to add.");
+    	}
+    	else{
+    		pub.setSysout(true);
+        	pub.addTopic(inputTopic.getText());
+    	}
     }
     
     @FXML
