@@ -10,6 +10,7 @@ import java.util.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,15 +30,15 @@ public class Datastore extends Observable{
 	
 	@XmlElement(name = "sensors")
 	private ObservableList<Sensor> datastore = FXCollections.observableArrayList();	
-	
-	private ObservableList<XYChart.Data<String, Number>> TempDatastore = FXCollections.observableArrayList();
-	private XYChart.Series<String, Number> series = new XYChart.Series(TempDatastore);
+	private ObservableList<XYChart.Series<String, Number>> tempChartData = FXCollections.observableArrayList();
+	private Series<String, Number> tempSeries = new Series<String, Number>();
 	
 	private int multiplicator = 1;
 	private int intervaltype = (1000*60*60*24); //day
 	
 	public Datastore(){
-		
+		tempSeries.setName("testserie");
+		tempSeries.getData().add(new XYChart.Data("Hallo", 5));
 	}
 	
 	public void add(Sensor s){
@@ -58,9 +59,8 @@ public class Datastore extends Observable{
 		datastore.add(s);
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");	
-		TempDatastore.add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
-		series.setData(TempDatastore);
-		
+		tempSeries.getData().add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
+
 		this.setChanged();
     	this.notifyObservers();
 	}
@@ -92,12 +92,8 @@ public class Datastore extends Observable{
 		datastore.clear();
 	}
 
-	public ObservableList<Sensor> getDatastore(){
-		return datastore;
+	public ObservableList<XYChart.Series<String, Number>> getDatastore() {
+		tempChartData.addAll(tempSeries);
+		return tempChartData;
 	}
-	
-	public XYChart.Series getTempSeries(){
-		return series;
-	}
-
 }

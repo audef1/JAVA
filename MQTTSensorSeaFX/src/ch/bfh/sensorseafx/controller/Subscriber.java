@@ -28,9 +28,15 @@ public class Subscriber extends Observable implements Runnable {
 	private String status = "";
 
 	public Subscriber(){
-		new Thread(this).run();
-	}
 
+	}
+	
+	public synchronized void start(){
+		Thread t = new Thread(this, "SubscriberThread");
+		t.setDaemon(false);
+		t.run();
+	}
+	
 	public synchronized void run(){
 	
 		if (broker.isConnected()){
@@ -43,11 +49,18 @@ public class Subscriber extends Observable implements Runnable {
 			
 			    	@Override
 			    	public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException{
-					   	Sensor s = (Sensor) ser.deserialize(message.getPayload());
-					   	if (sysout){
-					   		System.out.println("From " + string + ": " + s );
+					   	if (isSensor(ser.deserialize(message.getPayload()))){
+					   		Sensor s = (Sensor) ser.deserialize(message.getPayload());
+					   		if (sysout){
+						   		System.out.println("From " + string + ": " + s );
+						   	}
+						   	datastore.add(s);
 					   	}
-					   	datastore.add(s);
+					   	else{
+					   		if (sysout){
+						   		System.out.println("Message: " + message.getPayload() );
+						   	}
+					   	}
 				    }
 			    	
 			    	@Override
@@ -126,6 +139,15 @@ public class Subscriber extends Observable implements Runnable {
 	
 	public String getStatus(){
 		return status;
+	}
+	
+	private boolean isSensor(Object o) {
+		if (o == null)
+			  return false;
+		if (o instanceof Sensor)
+			  return true;
+		else
+			return false;
 	}
 	
 }

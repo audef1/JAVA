@@ -5,9 +5,12 @@ import java.util.Observer;
 import java.util.Optional;
 
 import ch.bfh.sensorseafx.model.Datastore;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -60,18 +63,24 @@ public class FXMLSubController implements Observer{
    @FXML
    private TextArea outputConsole;
    
+   private CategoryAxis xAxis = new CategoryAxis();
+   private NumberAxis yAxis = new NumberAxis();
+   
    @FXML
-   private LineChart<Number,Number> linechartTemp;   
+   private LineChart<String,Number> linechartTemp = new LineChart(xAxis, yAxis);
    
     @FXML
     void connect(ActionEvent event){
     	if (sub.getBroker().isConnected()){
+    		for (String s : sub.getTopics()){
+    			sub.unsubscribe(s);
+    		}
     		sub.getBroker().disconnect();
     	}
     	else{
+    		//checks if not empty, connect without port, etc.
     		sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
-        	//linechartTemp.getXAxis().setTickLabelsVisible(false);
-        	//linechartTemp.getXAxis().setTickMarkVisible(false);
+    		//sub.start();
     	}	
     }
     
@@ -83,15 +92,15 @@ public class FXMLSubController implements Observer{
     		alert.setTitle("Topic");
     		alert.setHeaderText(null);
     		alert.setContentText("Please specify a topic to add.");
-    		alert.showAndWait();
     		Optional<ButtonType> result = alert.showAndWait();
     		if (result.get() == ButtonType.OK){
-    		    inputTopic.setFocusTraversable(true);
+    		    inputTopic.requestFocus();
     		}
     	}
     	else{
     		sub.setSysout(true);
         	sub.subscribe(inputTopic.getText());
+        	inputTopic.setText("");
     	}
     	
     }
@@ -102,39 +111,40 @@ public class FXMLSubController implements Observer{
     }
     
 	@Override
-	public void update(Observable o, Object arg) {
-		
-		if (sub.getBroker().isConnected()){
-			btnQuickConnect.setText("Disconnect");
-			btnQuickConnect.setStyle("-fx-text-fill: red;");
-			inputHost.setDisable(true);
-			inputPort.setDisable(true);
-			inputUser.setDisable(true);
-			inputPass.setDisable(true);
+	public synchronized void update(Observable o, Object arg) {
+		Platform.runLater(() -> {
+			if (sub.getBroker().isConnected()){
+				btnQuickConnect.setText("Disconnect");
+				btnQuickConnect.setStyle("-fx-text-fill: red;");
+				inputHost.setDisable(true);
+				inputPort.setDisable(true);
+				inputUser.setDisable(true);
+				inputPass.setDisable(true);
+				
+				inputTopic.setDisable(false);
+				btnAddTopic.setDisable(false);
+				btnRemoveTopic.setDisable(false);
+			}
+			else{
+				btnQuickConnect.setText("Connect");
+				btnQuickConnect.setStyle("-fx-text-fill: black;");
+				inputHost.setDisable(false);
+				inputPort.setDisable(false);
+				inputUser.setDisable(false);
+				inputPass.setDisable(false);
+				
+				inputTopic.setDisable(true);
+				btnAddTopic.setDisable(true);
+				btnRemoveTopic.setDisable(true);
+			}
+				
 			
-			inputTopic.setDisable(false);
-			btnAddTopic.setDisable(false);
-			btnRemoveTopic.setDisable(false);
-		}
-		else{
-			btnQuickConnect.setText("Connect");
-			btnQuickConnect.setStyle("-fx-text-fill: black;");
-			inputHost.setDisable(false);
-			inputPort.setDisable(false);
-			inputUser.setDisable(false);
-			inputPass.setDisable(false);
+			if (o.equals(sub)){
+				listTopic.setItems(sub.getTopics());
+			}
 			
-			inputTopic.setDisable(true);
-			btnAddTopic.setDisable(true);
-			btnRemoveTopic.setDisable(true);
-		}
-			
-		
-		if (o.equals(sub)){
-			listTopic.setItems(sub.getTopics());
-		}
-		linechartTemp.getData().clear();
-		linechartTemp.getData().add(store.getTempSeries());
-		
+			linechartTemp.getData().clear();
+			linechartTemp.setData(store.getDatastore());
+		});
 	}
 }
