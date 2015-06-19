@@ -21,7 +21,7 @@ public class Publisher extends Observable{
 	private ObservableList<String> topics = FXCollections.observableArrayList();
 	private ObservableList<Sensor> sensors = FXCollections.observableArrayList();
 	private Serialiser ser = new Serialiser();
-	private boolean sysout = false;
+	private boolean debug = false;
 	
 	public Publisher(Broker broker){
 		this.broker = broker;
@@ -37,7 +37,7 @@ public class Publisher extends Observable{
 			try {
 				for (String topic:topics){
 					broker.getClient().publish(topic, message);
-					if (sysout){System.out.println("Sensorvalue published to " + topic + "!");}else{};
+					if (debug){System.out.println("Sensorvalue published to " + topic + "!");}else{};
 				}
 			} catch (MqttPersistenceException e) {
 				e.printStackTrace();
@@ -51,13 +51,13 @@ public class Publisher extends Observable{
 		}
 	}
 	
-	public void setSysout(boolean sysout){
-		this.sysout = sysout;
+	public void setDebug(boolean debug){
+		this.debug = debug;
 	}
 	
 	public void addTopic(String topic){
 			if (topics.contains(topic)){
-				if (sysout){System.out.println("Topic is already in the distributionlist.");}else{};
+				if (debug){System.out.println("Topic is already in the distributionlist.");}else{};
 			}
 			else
 			{
@@ -74,13 +74,21 @@ public class Publisher extends Observable{
 	    	this.notifyObservers();
 		}	
 		else{
-			if (sysout){System.out.println("No such topic to remove.");}else{};
+			if (debug){System.out.println("No such topic to remove.");}else{};
 		}	
+	}
+	
+	public void removeAllTopics(){
+		for (String topic : topics){
+			topics.remove(topics.indexOf(topic));
+		}
+    	this.setChanged();
+    	this.notifyObservers();
 	}
 	
 	public void addSensor(Sensor sensor){
 		if (sensors.contains(sensor)){
-			if (sysout){System.out.println("Sensor was already added.");}else{};
+			if (debug){System.out.println("Sensor was already added.");}else{};
 		}
 		else
 		{
@@ -100,7 +108,7 @@ public class Publisher extends Observable{
 	    	this.notifyObservers();
 		}	
 		else{
-			if (sysout){System.out.println("No such Sensor to remove.");}else{};
+			if (debug){System.out.println("No such Sensor to remove.");}else{};
 		}	
 	}
 	

@@ -1,6 +1,17 @@
 package ch.bfh.sensorseafx.controller;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Observable;
+import java.util.Optional;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -25,6 +36,7 @@ public class Broker extends Observable {
 		try {
 			if (client == null){
 				client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
+				connOpt.setConnectionTimeout(3);
 				connOpt.setCleanSession(false);
 				connOpt.setUserName(username);
 				connOpt.setPassword(password.toCharArray());
@@ -39,7 +51,7 @@ public class Broker extends Observable {
 				System.out.println("Connection to " + client.getServerURI() + " already established.");
 			}
 		} catch (MqttException e) {
-			e.printStackTrace();
+			connAlert(e);
 		}
 	}
 	
@@ -47,6 +59,7 @@ public class Broker extends Observable {
 		try {
 			if (client == null){
 				client = new MqttClient("tcp://" + host + ":1883", clientID);
+				connOpt.setConnectionTimeout(3);
 				connOpt.setCleanSession(false);
 				connOpt.setUserName(username);
 				connOpt.setPassword(password.toCharArray());
@@ -61,7 +74,7 @@ public class Broker extends Observable {
 				System.out.println("Connection to " + client.getServerURI() + " already established.");
 			}
 		} catch (MqttException e) {
-			e.printStackTrace();
+			connAlert(e);
 		}
 	}
 	
@@ -69,6 +82,7 @@ public class Broker extends Observable {
 		try {
 			if (client == null){
 				client = new MqttClient("tcp://" + host + ":1883", clientID);
+				connOpt.setConnectionTimeout(3);
 				System.out.println("Connecting to broker: "+ host);
 				connOpt.setCleanSession(false);
 				client.connect(connOpt);
@@ -81,20 +95,21 @@ public class Broker extends Observable {
 				System.out.println("Connection to " + client.getServerURI() + " already established.");
 			}
 		} catch (MqttException e) {
-			e.printStackTrace();
+			connAlert(e);
 		}
 	}
 	
 	public void connect(String host, int port){
 		try {
 			client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
+			connOpt.setConnectionTimeout(3);
 			System.out.println("Connecting to broker: "+ host);
 			client.connect(connOpt);
 			System.out.println("Connected!");
 			this.setChanged();
 	    	this.notifyObservers();
 		} catch (MqttException e) {
-			e.printStackTrace();
+			connAlert(e);
 		}
 	}
 	
@@ -125,5 +140,41 @@ public class Broker extends Observable {
 	
 	public void setClientID(String s){
 		this.clientID = s;
+	}
+	
+	public void connAlert(Exception e){
+		client = null;
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Connection Failure");
+		alert.setHeaderText("Oops an Error occured!");
+		alert.setContentText("Connection could not be established.");
+		// Create expandable Exception.
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		String exceptionText = sw.toString();
+
+		Label label = new Label("The exception stacktrace was:");
+
+		TextArea textArea = new TextArea(exceptionText);
+		textArea.setEditable(false);
+		textArea.setWrapText(true);
+		textArea.setMaxWidth(Double.MAX_VALUE);
+		textArea.setMaxHeight(Double.MAX_VALUE);
+		GridPane.setVgrow(textArea, Priority.ALWAYS);
+		GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+		GridPane expContent = new GridPane();
+		expContent.setMaxWidth(Double.MAX_VALUE);
+		expContent.add(label, 0, 0);
+		expContent.add(textArea, 0, 1);
+
+		// Set expandable Exception into the dialog pane.
+		alert.getDialogPane().setExpandableContent(expContent);
+		
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+		    
+		}
 	}
 }

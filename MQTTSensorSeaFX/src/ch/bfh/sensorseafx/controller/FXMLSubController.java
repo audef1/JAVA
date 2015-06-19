@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import ch.bfh.sensorseafx.model.Datastore;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
@@ -67,20 +68,30 @@ public class FXMLSubController implements Observer{
    private NumberAxis yAxis = new NumberAxis();
    
    @FXML
-   private LineChart<String,Number> linechartTemp = new LineChart(xAxis, yAxis);
+   private LineChart<String,Number> linechartTemp = new LineChart<String, Number>(xAxis, yAxis);
    
     @FXML
-    void connect(ActionEvent event){
+    void connect(ActionEvent event) throws InterruptedException{
     	if (sub.getBroker().isConnected()){
-    		for (String s : sub.getTopics()){
-    			sub.unsubscribe(s);
-    		}
+    		sub.unsubscribeAll();
     		sub.getBroker().disconnect();
     	}
     	else{
     		//checks if not empty, connect without port, etc.
-    		sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
-    		//sub.start();
+    		if (inputUser.getText().equals("") || inputPass.getText().equals("")){
+    			if (inputPort.getText().equals("")){
+    				sub.getBroker().connect(inputHost.getText());
+    			}
+    			else{
+    				sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()));
+    			}
+    		}
+    		else if (inputPort.getText().equals("")){
+    			sub.getBroker().connect(inputHost.getText(), inputUser.getText(), inputPass.getText());
+    		}
+    		else{
+    			sub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
+    		}
     	}	
     }
     
@@ -98,7 +109,7 @@ public class FXMLSubController implements Observer{
     		}
     	}
     	else{
-    		sub.setSysout(true);
+    		sub.setDebug(true);
         	sub.subscribe(inputTopic.getText());
         	inputTopic.setText("");
     	}
@@ -143,7 +154,6 @@ public class FXMLSubController implements Observer{
 				listTopic.setItems(sub.getTopics());
 			}
 			
-			linechartTemp.getData().clear();
 			linechartTemp.setData(store.getDatastore());
 		});
 	}

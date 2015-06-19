@@ -38,7 +38,11 @@ public class Datastore extends Observable{
 	
 	public Datastore(){
 		tempSeries.setName("testserie");
-		tempSeries.getData().add(new XYChart.Data("Hallo", 5));
+		tempSeries.getData().add(new XYChart.Data("10.10.15 10:05", 14));
+		tempSeries.getData().add(new XYChart.Data("10.10.15 10:15", 17));
+		tempSeries.getData().add(new XYChart.Data("10.10.15 10:25", 16));
+		tempSeries.getData().add(new XYChart.Data("10.10.15 10:35", 20));
+		tempChartData.addAll(tempSeries);
 	}
 	
 	public void add(Sensor s){
@@ -60,7 +64,8 @@ public class Datastore extends Observable{
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");	
 		tempSeries.getData().add(new XYChart.Data(dateFormat.format(s.getTimestamp()), (Number) s.getValues().get(0)));
-
+		tempChartData.addAll(tempSeries);
+		
 		this.setChanged();
     	this.notifyObservers();
 	}
@@ -93,7 +98,6 @@ public class Datastore extends Observable{
 	}
 
 	public ObservableList<XYChart.Series<String, Number>> getDatastore() {
-		tempChartData.addAll(tempSeries);
 		return tempChartData;
 	}
 }

@@ -3,6 +3,7 @@ package ch.bfh.sensorseafx.controller;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -23,6 +24,7 @@ public class FXMLPubController implements Observer {
 		this.store = store;
 		this.pub.addObserver(this);
 		this.store.addObserver(this);
+		this.pub.getBroker().addObserver(this);
 	}
 
 	@FXML
@@ -64,9 +66,8 @@ public class FXMLPubController implements Observer {
     		pub.getBroker().disconnect();
     	}
     	else{
+    		//checks if not empty, connect without port, etc.
     		pub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
-        	//linechartTemp.getXAxis().setTickLabelsVisible(false);
-        	//linechartTemp.getXAxis().setTickMarkVisible(false);
     	}
     }
     
@@ -76,7 +77,7 @@ public class FXMLPubController implements Observer {
     		System.out.println("no topic to add.");
     	}
     	else{
-    		pub.setSysout(true);
+    		pub.setDebug(true);
         	pub.addTopic(inputTopic.getText());
     	}
     }
@@ -87,13 +88,36 @@ public class FXMLPubController implements Observer {
     }
     
 	@Override
-	public void update(Observable o, Object arg) {
+	public synchronized void update(Observable o, Object arg) {
+		Platform.runLater(() -> {
+			if (pub.getBroker().isConnected()){
+				btnQuickConnect.setText("Disconnect Broker");
+				btnQuickConnect.setStyle("-fx-text-fill: red;");
+				inputHost.setDisable(true);
+				inputPort.setDisable(true);
+				inputUser.setDisable(true);
+				inputPass.setDisable(true);
+				
+				inputTopic.setDisable(false);
+				btnAddTopic.setDisable(false);
+				btnRemoveTopic.setDisable(false);
+			}
+			else{
+				btnQuickConnect.setText("Connect Broker");
+				btnQuickConnect.setStyle("-fx-text-fill: black;");
+				inputHost.setDisable(false);
+				inputPort.setDisable(false);
+				inputUser.setDisable(false);
+				inputPass.setDisable(false);
+				
+				inputTopic.setDisable(true);
+				btnAddTopic.setDisable(true);
+				btnRemoveTopic.setDisable(true);
+			}
 		
-		if (o.equals(pub)){
-			listTopic.setItems(pub.getTopics());
-		}
-		linechartTemp.getData().clear();
-		linechartTemp.getData().add(store.getTempSeries());
-		
+			if (o.equals(pub)){
+				listTopic.setItems(pub.getTopics());
+			}
+		});
 	}
 }
