@@ -15,7 +15,7 @@ public class nothredreciever {
 	private MqttClient mqttClient;
 
 	public nothredreciever() throws MqttSecurityException, MqttException {
-		mqttClient = new MqttClient("tcp://m20.cloudmqtt.com:13575", "test");
+		mqttClient = new MqttClient("tcp://m20.cloudmqtt.com:13575", "blaa");
 
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(false);

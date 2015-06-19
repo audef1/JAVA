@@ -23,7 +23,7 @@ public class MqttChatSender extends Thread{
 		MqttClient mqttClient;
 		try {
 			//mqttClient = new MqttClient("tcp://remote.floeggu.ch:1883", "test");
-			mqttClient = new MqttClient("tcp://m20.cloudmqtt.com:13575", "test");
+			mqttClient = new MqttClient("tcp://m20.cloudmqtt.com:13575", "test2");
 			
 			MqttConnectOptions options = new MqttConnectOptions();
 			options.setCleanSession(false);
