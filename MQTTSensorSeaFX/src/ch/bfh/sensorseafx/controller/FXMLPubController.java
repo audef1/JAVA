@@ -61,12 +61,9 @@ public class FXMLPubController implements Observer {
    
     @FXML
     private ListView<String> listTopic;
-    
-   @FXML
-   private TextArea outputConsole;
-   
-   @FXML
-   private LineChart<Number,Number> linechartTemp;   
+
+    @FXML
+    private ListView<String> listSensors;
    
     @FXML
     void connect(ActionEvent event) throws InterruptedException{
@@ -153,6 +150,10 @@ public class FXMLPubController implements Observer {
 		
 			if (o.equals(pub.getSubscriberList())){
 				listTopic.setItems(pub.getSubscriberList().getTopics());
+			}
+			
+			if (o.equals(pub.getSensorList())){
+				list.setItems(pub.getSubscriberList().getTopics());
 			}
 		});
 	}

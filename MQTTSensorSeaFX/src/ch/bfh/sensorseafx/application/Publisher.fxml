@@ -66,17 +66,17 @@
          <bottom>
             <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="226.0" BorderPane.alignment="CENTER">
                <children>
-                  <TextField fx:id="inputTopic" prefHeight="26.0" prefWidth="127.0" promptText="Topic">
+                  <TextField fx:id="inputTopic" editable="false" prefHeight="26.0" prefWidth="127.0" promptText="Topic">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="btnAddTopic" mnemonicParsing="false" onAction="#addTopic" prefHeight="26.0" prefWidth="30.0" text="+">
+                  <Button fx:id="btnAddTopic" disable="true" mnemonicParsing="false" onAction="#addTopic" prefHeight="26.0" prefWidth="30.0" text="+">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnRemoveTopic" mnemonicParsing="false" onAction="#removeTopic" prefHeight="26.0" prefWidth="30.0" text="-" textAlignment="CENTER">
+                  <Button fx:id="btnRemoveTopic" disable="true" mnemonicParsing="false" onAction="#removeTopic" prefHeight="26.0" prefWidth="30.0" text="-" textAlignment="CENTER">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -107,13 +107,13 @@
    <left>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-            <ListView prefHeight="191.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <ListView fx:id="listSensors" prefHeight="191.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </center>
          <bottom>
             <HBox alignment="CENTER" prefHeight="45.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="111.0" text="Search Devices" />
-                  <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Connect">
+                  <Button fx:id="btnSearchSensor" mnemonicParsing="false" prefHeight="26.0" prefWidth="111.0" text="Search Devices" />
+                  <Button fx:id="btnConnectDevice" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Connect">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
