@@ -1,10 +1,8 @@
 package ch.bfh.sensorseafx.controller;
 
 import java.io.StreamCorruptedException;
-import java.util.Observable;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -14,29 +12,31 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import ch.bfh.sensorseafx.helpers.Serialiser;
 import ch.bfh.sensorseafx.model.Datastore;
+import ch.bfh.sensorseafx.model.SubscriberList;
 import ch.bfh.sensorseafx.sensors.Sensor;
 
-public class Subscriber extends Observable implements Runnable{
+public class Subscriber extends ScheduledService<Void>{
 	
 	private Datastore datastore;
-	private ObservableList<String> topics = FXCollections.observableArrayList();
+	
+	private SubscriberList topics = new SubscriberList();
 	private Broker broker = new Broker("subscriber");
 	private Serialiser ser = new Serialiser();
-	private boolean on = true;
 	private boolean debug = false;
 	private String status = "";
-
+	
 	public Subscriber(){
 		
 	}
 	
-	public Task checkMessages() {
-		return new Task() {
+	@Override
+	protected Task<Void> createTask() {
+		return new Task<Void>() {
 			@Override
-			protected Object call() throws Exception {
-				
-				while (broker.isConnected()) {
-					System.out.println("subscriber running");
+			protected Void call() throws Exception {
+				System.out.println("service running");
+				if (broker.getClient().isConnected()) {
+					System.out.println("connected - waiting for messages");
 					broker.getClient().setCallback(new MqttCallback() {
 						@Override
 						public void connectionLost(Throwable throwable) {
@@ -44,19 +44,16 @@ public class Subscriber extends Observable implements Runnable{
 						}
 
 						@Override
-						public void messageArrived(String string, MqttMessage message)
-								throws Exception, StreamCorruptedException {
-							if (isSensor(ser.deserialize(message.getPayload()))) {
-								Sensor s = (Sensor) ser.deserialize(message
-										.getPayload());
+						public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException {
+							if (ser.deserialize(message.getPayload()) instanceof Sensor) {
+								Sensor s = (Sensor) ser.deserialize(message.getPayload());
 								if (debug) {
 									System.out.println("From " + string + ": " + s);
 								}
 								datastore.add(s);
 							} else {
 								if (debug) {
-									System.out.println("Message: "
-											+ message.getPayload());
+									System.out.println("From " + string + ": " + message);
 								}
 							}
 						}
@@ -67,59 +64,15 @@ public class Subscriber extends Observable implements Runnable{
 						}
 
 					});
-					
-					Thread.sleep(1000);
-
 				}
-				
-				return true;
+				return null;
 			}
 		};
 	}
 	
-	public synchronized void run() {
-		while (broker.isConnected()) {
-			System.out.println("subscriber running");
-			broker.getClient().setCallback(new MqttCallback() {
-				@Override
-				public void connectionLost(Throwable throwable) {
-
-				}
-
-				@Override
-				public void messageArrived(String string, MqttMessage message)
-						throws Exception, StreamCorruptedException {
-					if (isSensor(ser.deserialize(message.getPayload()))) {
-						Sensor s = (Sensor) ser.deserialize(message
-								.getPayload());
-						if (debug) {
-							System.out.println("From " + string + ": " + s);
-						}
-						datastore.add(s);
-					} else {
-						if (debug) {
-							System.out.println("Message: "
-									+ message.getPayload());
-						}
-					}
-				}
-
-				@Override
-				public void deliveryComplete(IMqttDeliveryToken imdt) {
-
-				}
-
-			});
-
-			this.setChanged();
-			this.notifyObservers();
-		}
-	}
-
-	
 	public void subscribe(String topic){
-		if (broker.isConnected()){
-			if (topics.contains(topic)){
+		if (broker.getClient().isConnected()){
+			if (topics.getTopics().contains(topic)){
 				if (debug){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
 				status = "Already subscribed to the topic " + topic + ".";
 			}
@@ -135,16 +88,14 @@ public class Subscriber extends Observable implements Runnable{
 				if (debug){System.out.println("Subscribed to the topic " + topic + ".");}else{};
 				status = "Subscribed to the topic " + topic + ".";
 				
-				this.setChanged();
-		    	this.notifyObservers();
 			}
 	    	
 		}
 	}
 	
 	public void unsubscribe(String topic){
-		if (topics.contains(topic)){
-			topics.remove(topics.indexOf(topic));
+		if (topics.getTopics().contains(topic)){
+			topics.remove(topic);
 			
 			try {
 				broker.getClient().unsubscribe(topic);
@@ -155,8 +106,6 @@ public class Subscriber extends Observable implements Runnable{
 			if (debug){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 			status = "Unsubscribed from topic " + topic + ".";
 			
-			this.setChanged();
-	    	this.notifyObservers();
 		}
 		else{
 			if (debug){System.out.println("No such topic to unsubscribe.");}else{};
@@ -166,12 +115,10 @@ public class Subscriber extends Observable implements Runnable{
 	}
 	
 	public void unsubscribeAll(){
-		for (String topic : topics){
+		for (String topic : topics.getTopics()){
 			unsubscribe(topic);
 		}
-		topics = FXCollections.observableArrayList();	
-    	this.setChanged();
-    	this.notifyObservers();
+		topics.removeAll();
 	}
 	
 	public void setBroker(Broker broker){
@@ -182,10 +129,6 @@ public class Subscriber extends Observable implements Runnable{
 		return broker;
 	}
 	
-	public ObservableList<String> getTopics(){
-		return topics;
-	}
-	
 	public void setDatastore(Datastore datastore){
 		this.datastore = datastore;
 	}
@@ -194,17 +137,12 @@ public class Subscriber extends Observable implements Runnable{
 		this.debug = debug;
 	}
 	
-	public String getStatus(){
-		return status;
+	public SubscriberList getSubscriberList(){
+		return topics;
 	}
 	
-	private boolean isSensor(Object o) {
-		if (o == null)
-			  return false;
-		if (o instanceof Sensor)
-			  return true;
-		else
-			return false;
+	public String getStatus(){
+		return status;
 	}
 	
 }

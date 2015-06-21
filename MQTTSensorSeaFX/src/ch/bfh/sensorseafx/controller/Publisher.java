@@ -1,25 +1,32 @@
 package ch.bfh.sensorseafx.controller;
 
 import java.io.IOException;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Observable;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import ch.bfh.sensorseafx.helpers.Serialiser;
+import ch.bfh.sensorseafx.model.SensorList;
+import ch.bfh.sensorseafx.model.SubscriberList;
 import ch.bfh.sensorseafx.sensors.Sensor;
 
-public class Publisher extends Observable{
+public class Publisher extends ScheduledService<Void>{
 
 	private Broker broker = new Broker("publisher");
-	private ObservableList<String> topics = FXCollections.observableArrayList();
-	private ObservableList<Sensor> sensors = FXCollections.observableArrayList();
+	private SubscriberList topics = new SubscriberList();
+	private SensorList sensors = new SensorList();
 	private Serialiser ser = new Serialiser();
 	private boolean debug = false;
 	
@@ -28,6 +35,27 @@ public class Publisher extends Observable{
 	}
 	
 	public Publisher(){
+		
+	}
+	
+	@Override
+	protected Task<Void> createTask() {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				System.out.println("Service running");
+				if (!(sensors.getSensors().isEmpty())){
+					
+					System.out.println("Sending Sensorvalues every 5 Seconds");
+					
+					for (Sensor sensor : sensors.getSensors()){
+						publish(sensor);
+					}
+					
+				}
+				return null;
+			}
+		};
 	}
 	
 	public void publish(Sensor s){
@@ -35,7 +63,7 @@ public class Publisher extends Observable{
 			byte[] bytes = ser.serialize(s);
 			MqttMessage message = new MqttMessage(bytes);
 			try {
-				for (String topic:topics){
+				for (String topic:topics.getTopics()){
 					broker.getClient().publish(topic, message);
 					if (debug){System.out.println("Sensorvalue published to " + topic + "!");}else{};
 				}
@@ -55,68 +83,58 @@ public class Publisher extends Observable{
 		this.debug = debug;
 	}
 	
-	public void addTopic(String topic){
-			if (topics.contains(topic)){
+	public void subscribe(String topic){
+			if (topics.getTopics().contains(topic)){
 				if (debug){System.out.println("Topic is already in the distributionlist.");}else{};
 			}
 			else
 			{
 				topics.add(topic);
-		    	this.setChanged();
-		    	this.notifyObservers();
+				if (debug){System.out.println("Subscribed to Topic " + topic + ".");}else{};
 			}	
 	}
 	
-	public void removeTopic(String topic){
-		if (topics.contains(topic)){
-			topics.remove(topics.indexOf(topic));
-	    	this.setChanged();
-	    	this.notifyObservers();
+	public void unsubscribe(String topic){
+		if (topics.getTopics().contains(topic)){
+			topics.remove(topic);
 		}	
 		else{
 			if (debug){System.out.println("No such topic to remove.");}else{};
 		}	
 	}
 	
-	public void removeAllTopics(){
-		for (String topic : topics){
-			topics.remove(topics.indexOf(topic));
+	public void unsubscribeAll(){
+		for (String topic : topics.getTopics()){
+			topics.remove(topic);
 		}
-    	this.setChanged();
-    	this.notifyObservers();
 	}
 	
 	public void addSensor(Sensor sensor){
-		if (sensors.contains(sensor)){
+		if (sensors.getSensors().contains(sensor)){
 			if (debug){System.out.println("Sensor was already added.");}else{};
 		}
 		else
 		{
 			sensors.add(sensor);
-			sensor.setInterval(60000);
-			sensor.setDaemon(false);
-			
-	    	this.setChanged();
-	    	this.notifyObservers();
+			if (debug){System.out.println("Sensor has been added to the list.");}else{};
 		}	
 	}
 	
 	public void removeSensor(Sensor sensor){
-		if (sensors.contains(sensor)){
-			sensors.remove(sensors.indexOf(sensor));
-	    	this.setChanged();
-	    	this.notifyObservers();
+		if (sensors.getSensors().contains(sensor)){
+			sensors.remove(sensor);
 		}	
 		else{
 			if (debug){System.out.println("No such Sensor to remove.");}else{};
 		}	
 	}
 	
+	public SubscriberList getSubscriberList(){
+		return topics;
+	}
+	
 	public Broker getBroker(){
 		return broker;
 	}
-	
-	public ObservableList<String> getTopics(){
-		return topics;
-	}
+
 }

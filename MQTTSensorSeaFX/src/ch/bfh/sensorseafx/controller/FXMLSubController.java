@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import ch.bfh.sensorseafx.model.Datastore;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
@@ -20,6 +19,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
 
 public class FXMLSubController implements Observer{
     
@@ -28,10 +28,16 @@ public class FXMLSubController implements Observer{
 	
 	public FXMLSubController(Subscriber sub, Datastore store){
 		this.sub = sub;
-		this.store = store;
-		this.sub.addObserver(this);
-		this.store.addObserver(this);
+		this.sub.getSubscriberList().addObserver(this);
+		this.sub.setDatastore(store);
 		this.sub.getBroker().addObserver(this);
+		
+		this.store = store;
+		this.store.addObserver(this);
+		
+		this.sub.setPeriod(Duration.seconds(3));
+		this.sub.start();
+		
 	}
 	
 	@FXML
@@ -73,11 +79,13 @@ public class FXMLSubController implements Observer{
     @FXML
     void connect(ActionEvent event) throws InterruptedException{
     	if (sub.getBroker().isConnected()){
+    		//disconnect
     		sub.unsubscribeAll();
-    		sub.getBroker().disconnect();
+        	sub.getBroker().disconnect();
+    		
     	}
     	else{
-    		//checks if not empty, connect without port, etc.
+    		//connect
     		if (inputUser.getText().equals("") || inputPass.getText().equals("")){
     			if (inputPort.getText().equals("")){
     				sub.getBroker().connect(inputHost.getText());
@@ -150,8 +158,8 @@ public class FXMLSubController implements Observer{
 			}
 				
 			
-			if (o.equals(sub)){
-				listTopic.setItems(sub.getTopics());
+			if (o.equals(sub.getSubscriberList())){
+				listTopic.setItems(sub.getSubscriberList().getTopics());
 			}
 			
 			linechartTemp.setData(store.getDatastore());

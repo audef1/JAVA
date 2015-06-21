@@ -25,7 +25,7 @@ public class TempSensor extends Sensor {
 	@Override
 	public void addValues() {
 		//werte eines temperatursensors
-		System.out.println("es wurden: " + getSming().readTempAttribute() + " gemessen.");
+		//System.out.println("es wurden: " + getSming().readTempAttribute() + " gemessen.");
 		getValues().add(1 + (int)(Math.random()*37));
 		
 	}

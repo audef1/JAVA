@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 public class Main extends Application {
 	
@@ -22,10 +23,8 @@ public class Main extends Application {
 	public void start(Stage Stage) throws IOException {
 		
 			//create the actual view and link it to the model and controller
-			SubscriberGUI sgui = new SubscriberGUI(sub, store);
-			//PublisherGUI pgui = new PublisherGUI(pub, store);
-			
-			//new Thread(sub.checkMessages()).start();
+			//SubscriberGUI sgui = new SubscriberGUI(sub, store);
+			PublisherGUI pgui = new PublisherGUI(pub, store);
 			
 			//add close function
 			Stage.setOnCloseRequest(new EventHandler<WindowEvent>() {

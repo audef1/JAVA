@@ -38,11 +38,6 @@ public class Datastore extends Observable{
 	
 	public Datastore(){
 		tempSeries.setName("testserie");
-		tempSeries.getData().add(new XYChart.Data("10.10.15 10:05", 14));
-		tempSeries.getData().add(new XYChart.Data("10.10.15 10:15", 17));
-		tempSeries.getData().add(new XYChart.Data("10.10.15 10:25", 16));
-		tempSeries.getData().add(new XYChart.Data("10.10.15 10:35", 20));
-		tempChartData.addAll(tempSeries);
 	}
 	
 	public void add(Sensor s){

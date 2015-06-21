@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import ch.bfh.sensorseafx.controller.Publisher;
 import ch.bfh.sming.service.Sming;
-import ch.bfh.sming.service.Txw51Service;
 
 public abstract class Sensor extends Thread implements Serializable{
 	

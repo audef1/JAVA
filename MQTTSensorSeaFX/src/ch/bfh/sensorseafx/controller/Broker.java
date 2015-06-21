@@ -132,10 +132,9 @@ public class Broker extends Observable {
 	}
 	
 	public boolean isConnected(){
-		if (client == null)
-			return false;
-		else
-			return client.isConnected();	
+		if (client != null)
+			return client.isConnected();
+		return false;	
 	}
 	
 	public void setClientID(String s){
