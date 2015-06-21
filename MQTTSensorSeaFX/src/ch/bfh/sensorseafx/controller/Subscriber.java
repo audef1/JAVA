@@ -1,6 +1,7 @@
 package ch.bfh.sensorseafx.controller;
 
 import java.io.StreamCorruptedException;
+import java.util.Date;
 
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -18,44 +19,43 @@ import ch.bfh.sensorseafx.sensors.Sensor;
 public class Subscriber extends ScheduledService<Void>{
 	
 	private Datastore datastore;
-	
+
 	private SubscriberList topics = new SubscriberList();
-	private Broker broker = new Broker("subscriber");
+	private String id = Double.toString(new Date().getTime());
+	private Broker broker = new Broker("sub" + id);
 	private Serialiser ser = new Serialiser();
 	private boolean debug = false;
 	private String status = "";
 	
-	public Subscriber(){
-		
-	}
+	public Subscriber(){}
 	
 	@Override
 	protected Task<Void> createTask() {
 		return new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				System.out.println("service running");
-				if (broker.getClient().isConnected()) {
-					System.out.println("connected - waiting for messages");
+				System.out.println("subscriberservice running...");
+				if (broker.isConnected()) {
+					System.out.println("connected - waiting for messages...");
 					broker.getClient().setCallback(new MqttCallback() {
 						@Override
 						public void connectionLost(Throwable throwable) {
-
+							System.out.println("Connection Lost");
 						}
 
 						@Override
 						public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException {
-							if (ser.deserialize(message.getPayload()) instanceof Sensor) {
+							//if (Sensor.class.isAssignableFrom(ser.deserialize(message.getPayload()).getClass())){
 								Sensor s = (Sensor) ser.deserialize(message.getPayload());
 								if (debug) {
 									System.out.println("From " + string + ": " + s);
 								}
 								datastore.add(s);
-							} else {
-								if (debug) {
-									System.out.println("From " + string + ": " + message);
-								}
-							}
+//							} else {
+//								if (debug) {
+//									System.out.println("From " + string + ": " + message);
+//								}
+//							}
 						}
 
 						@Override
@@ -71,7 +71,7 @@ public class Subscriber extends ScheduledService<Void>{
 	}
 	
 	public void subscribe(String topic){
-		if (broker.getClient().isConnected()){
+		if (broker.isConnected()){
 			if (topics.getTopics().contains(topic)){
 				if (debug){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
 				status = "Already subscribed to the topic " + topic + ".";

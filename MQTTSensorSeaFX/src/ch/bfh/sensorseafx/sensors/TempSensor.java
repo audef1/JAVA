@@ -3,31 +3,31 @@ package ch.bfh.sensorseafx.sensors;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javafx.util.Duration;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import ch.bfh.sensorseafx.controller.Publisher;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "tempsensor")
 public class TempSensor extends Sensor {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	public TempSensor(){}
 	
-	public TempSensor(String id, Publisher p){
+	public TempSensor(String id){
 		this.setSourceID(id);
-		this.setPublisher(p);
+		this.setPeriod(Duration.minutes(1));
+		this.start();
+		System.out.println("adding new sensor");
+		System.out.println("connecting to " + id);
 	}
 
 	@Override
 	public void addValues() {
-		//werte eines temperatursensors
-		//System.out.println("es wurden: " + getSming().readTempAttribute() + " gemessen.");
-		getValues().add(1 + (int)(Math.random()*37));
-		
+		getValues().add(1 + (int)(Math.random()*35));
 	}
 
 	@Override

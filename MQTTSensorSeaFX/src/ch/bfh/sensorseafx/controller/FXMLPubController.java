@@ -7,17 +7,17 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.Duration;
 import ch.bfh.sensorseafx.model.Datastore;
+import ch.bfh.sensorseafx.sensors.Sensor;
+import ch.bfh.sensorseafx.sensors.TempSensor;
 
 public class FXMLPubController implements Observer {
 
@@ -26,13 +26,16 @@ public class FXMLPubController implements Observer {
 	
 	public FXMLPubController(Publisher pub, Datastore store){
 		this.pub = pub;
+		this.pub.setDebug(true);
 		this.pub.getSubscriberList().addObserver(this);
+		this.pub.getSensorList().addObserver(this);
 		this.pub.getBroker().addObserver(this);
 		
 		this.store = store;
 		this.store.addObserver(this);
 		
-		this.pub.setPeriod(Duration.seconds(5));
+		pub.setPeriod(Duration.seconds(20));
+		pub.start();
 	}
 
 	@FXML
@@ -43,6 +46,12 @@ public class FXMLPubController implements Observer {
 	
     @FXML
     private Button btnQuickConnect;
+	
+    @FXML
+    private Button btnSearchDevices;
+    
+	@FXML
+    private Button btnConnectDevice;
     
     @FXML
     private TextField inputHost;
@@ -64,6 +73,9 @@ public class FXMLPubController implements Observer {
 
     @FXML
     private ListView<String> listSensors;
+    
+    @FXML
+    private ListView<String> listConnSensors;
    
     @FXML
     void connect(ActionEvent event) throws InterruptedException{
@@ -77,20 +89,16 @@ public class FXMLPubController implements Observer {
     		if (inputUser.getText().equals("") || inputPass.getText().equals("")){
     			if (inputPort.getText().equals("")){
     				pub.getBroker().connect(inputHost.getText());
-    				pub.start();
     			}
     			else{
     				pub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()));
-    				pub.start();
     			}
     		}
     		else if (inputPort.getText().equals("")){
     			pub.getBroker().connect(inputHost.getText(), inputUser.getText(), inputPass.getText());
-    			pub.start();
     		}
     		else{
     			pub.getBroker().connect(inputHost.getText(), Integer.parseInt(inputPort.getText()), inputUser.getText(), inputPass.getText());
-    			pub.start();
     		}
     	}	
     }
@@ -109,7 +117,6 @@ public class FXMLPubController implements Observer {
     		}
     	}
     	else{
-    		pub.setDebug(true);
         	pub.subscribe(inputTopic.getText());
         	inputTopic.setText("");
     	}
@@ -118,6 +125,21 @@ public class FXMLPubController implements Observer {
     @FXML
     void removeTopic(ActionEvent event){
     	pub.unsubscribe(listTopic.getSelectionModel().getSelectedItem());
+    }
+    
+    @FXML
+    void searchDevices(ActionEvent event){
+    	//testing
+    	System.out.println("searching for devices...");
+		pub.getSensorList().addTestSensor("ab:cd:ef:12:34");
+		pub.getSensorList().addTestSensor("99:99:99:99:99");
+		pub.getSensorList().addTestSensor("12:34:56:78:90");
+    }
+    
+    @FXML
+    void connectDevice(ActionEvent event){
+    	//
+    	pub.getSensorList().add(new TempSensor(listSensors.getSelectionModel().getSelectedItem()));
     }
     
 	@Override
@@ -131,7 +153,14 @@ public class FXMLPubController implements Observer {
 				inputUser.setDisable(true);
 				inputPass.setDisable(true);
 				
+				btnSearchDevices.setDisable(false);
+				
+				if (listSensors.getSelectionModel().getSelectedItem() != null){
+					btnConnectDevice.setDisable(false);
+				}
+				
 				inputTopic.setDisable(false);
+				inputTopic.setEditable(true);
 				btnAddTopic.setDisable(false);
 				btnRemoveTopic.setDisable(false);
 			}
@@ -143,7 +172,11 @@ public class FXMLPubController implements Observer {
 				inputUser.setDisable(false);
 				inputPass.setDisable(false);
 				
+				btnSearchDevices.setDisable(true);
+				btnConnectDevice.setDisable(true);
+				
 				inputTopic.setDisable(true);
+				inputTopic.setEditable(false);
 				btnAddTopic.setDisable(true);
 				btnRemoveTopic.setDisable(true);
 			}
@@ -153,7 +186,9 @@ public class FXMLPubController implements Observer {
 			}
 			
 			if (o.equals(pub.getSensorList())){
-				list.setItems(pub.getSubscriberList().getTopics());
+				// replace with sensorlist from bluetoothdongle
+				listSensors.setItems(pub.getSensorList().getTestSensors());
+				listConnSensors.setItems(pub.getSensorList().getConnectedSensors());
 			}
 		});
 	}

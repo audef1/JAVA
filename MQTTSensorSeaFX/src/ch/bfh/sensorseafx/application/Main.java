@@ -23,7 +23,7 @@ public class Main extends Application {
 	public void start(Stage Stage) throws IOException {
 		
 			//create the actual view and link it to the model and controller
-			//SubscriberGUI sgui = new SubscriberGUI(sub, store);
+			SubscriberGUI sgui = new SubscriberGUI(sub, store);
 			PublisherGUI pgui = new PublisherGUI(pub, store);
 			
 			//add close function

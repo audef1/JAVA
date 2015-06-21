@@ -4,23 +4,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
+
 import javax.xml.bind.annotation.XmlElement;
 
-import ch.bfh.sensorseafx.controller.Publisher;
-import ch.bfh.sming.service.Sming;
-
-public abstract class Sensor extends Thread implements Serializable{
+public abstract class Sensor extends ScheduledService<Void> implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
 	private long timestamp;
 	private String sourceID;
-	private transient String mac;
-	private transient Publisher publisher;
-	private transient boolean on = true;
-	private transient int interval = 1000;
-	private transient Sming sming;
-	
+
 	@XmlElement(name ="value")
 	private ArrayList<Object> values = new ArrayList<Object>();
 	
@@ -28,30 +23,19 @@ public abstract class Sensor extends Thread implements Serializable{
 	
 	public abstract void addValues();
 	public abstract String toString();
-	
-	public synchronized void run(){
 		
-		sming = new Sming();
-		sming.initialize();
-		sming.getService().discoverDevices();
-		
-		while (on){
-			setTimestamp();
-			addValues();
-			sendValue();
-			cleanup();
-			try {
-				wait(interval);
-			} catch (InterruptedException e) {
-				on = false;
-				System.out.println("Sensor " + sourceID + " has been shutdown due to an error.");
-				e.printStackTrace();
+	@Override
+	protected Task<Void> createTask() {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				System.out.println("Sensor "+ sourceID + " running");
+				setTimestamp();
+				addValues();
+				cleanup();
+				return null;
 			}
-		}
-	}
-	
-	public void sendValue() {
-		publisher.publish(this);
+		};
 	}
 	
 	private void cleanup(){
@@ -74,24 +58,8 @@ public abstract class Sensor extends Thread implements Serializable{
 		return sourceID;
 	}
 	
-	public void setPublisher(Publisher publisher){
-		this.publisher = publisher;
-	}
-	
-	public Publisher getPublisher(){
-		return publisher;
-	}
-	
-	public void setInterval(int interval){
-		this.interval = interval;
-	}
-	
 	public ArrayList<Object> getValues(){
 		return values;
-	}
-
-	public Sming getSming() {
-		return sming;
 	}
 
 }

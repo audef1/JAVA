@@ -29,15 +29,14 @@ public class FXMLSubController implements Observer{
 	public FXMLSubController(Subscriber sub, Datastore store){
 		this.sub = sub;
 		this.sub.getSubscriberList().addObserver(this);
-		this.sub.setDatastore(store);
 		this.sub.getBroker().addObserver(this);
 		
+		this.sub.setDatastore(store);
 		this.store = store;
 		this.store.addObserver(this);
-		
-		this.sub.setPeriod(Duration.seconds(3));
-		this.sub.start();
-		
+
+		sub.setPeriod(Duration.seconds(20));
+		sub.start();
 	}
 	
 	@FXML
@@ -82,7 +81,6 @@ public class FXMLSubController implements Observer{
     		//disconnect
     		sub.unsubscribeAll();
         	sub.getBroker().disconnect();
-    		
     	}
     	else{
     		//connect

@@ -1,18 +1,11 @@
 package ch.bfh.sensorseafx.controller;
 
 import java.io.IOException;
-import java.io.StreamCorruptedException;
-import java.util.ArrayList;
-import java.util.Observable;
+import java.util.Date;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
@@ -23,35 +16,32 @@ import ch.bfh.sensorseafx.model.SubscriberList;
 import ch.bfh.sensorseafx.sensors.Sensor;
 
 public class Publisher extends ScheduledService<Void>{
-
-	private Broker broker = new Broker("publisher");
+	
+	private String id = Double.toString(new Date().getTime());
+	private Broker broker = new Broker("pub" + id);
 	private SubscriberList topics = new SubscriberList();
 	private SensorList sensors = new SensorList();
 	private Serialiser ser = new Serialiser();
 	private boolean debug = false;
+	private String status = "";
 	
-	public Publisher(Broker broker){
-		this.broker = broker;
-	}
-	
-	public Publisher(){
-		
-	}
+	public Publisher(){}
 	
 	@Override
 	protected Task<Void> createTask() {
 		return new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				System.out.println("Service running");
+				System.out.println("publisherservice running...");
 				if (!(sensors.getSensors().isEmpty())){
-					
-					System.out.println("Sending Sensorvalues every 5 Seconds");
-					
-					for (Sensor sensor : sensors.getSensors()){
-						publish(sensor);
+					if (!(topics.getTopics().isEmpty())){
+						System.out.println("connected - publishing values...");
+						for (Sensor sensor : sensors.getSensors()){
+							if (sensor.isRunning()){
+								publish(sensor);
+							}
+						}
 					}
-					
 				}
 				return null;
 			}
@@ -84,29 +74,54 @@ public class Publisher extends ScheduledService<Void>{
 	}
 	
 	public void subscribe(String topic){
+		if (broker.getClient().isConnected()){
 			if (topics.getTopics().contains(topic)){
-				if (debug){System.out.println("Topic is already in the distributionlist.");}else{};
+				if (debug){System.out.println("Already subscribed to the topic " + topic + ".");}else{};
+				status = "Already subscribed to the topic " + topic + ".";
 			}
-			else
-			{
+			else{
 				topics.add(topic);
-				if (debug){System.out.println("Subscribed to Topic " + topic + ".");}else{};
-			}	
+				
+				try {
+					broker.getClient().subscribe(topic);
+				} catch (MqttException e) {
+					e.printStackTrace();
+				}
+				
+				if (debug){System.out.println("Subscribed to the topic " + topic + ".");}else{};
+				status = "Subscribed to the topic " + topic + ".";
+				
+			}
+	    	
+		}
 	}
 	
 	public void unsubscribe(String topic){
 		if (topics.getTopics().contains(topic)){
 			topics.remove(topic);
-		}	
+			
+			try {
+				broker.getClient().unsubscribe(topic);
+			} catch (MqttException e) {
+				e.printStackTrace();
+			}
+			
+			if (debug){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
+			status = "Unsubscribed from topic " + topic + ".";
+			
+		}
 		else{
-			if (debug){System.out.println("No such topic to remove.");}else{};
-		}	
+			if (debug){System.out.println("No such topic to unsubscribe.");}else{};
+			status = "No topic selected to unsubscribe.";
+		}
+    	
 	}
 	
 	public void unsubscribeAll(){
 		for (String topic : topics.getTopics()){
-			topics.remove(topic);
+			unsubscribe(topic);
 		}
+		topics.removeAll();
 	}
 	
 	public void addSensor(Sensor sensor){
@@ -131,6 +146,10 @@ public class Publisher extends ScheduledService<Void>{
 	
 	public SubscriberList getSubscriberList(){
 		return topics;
+	}
+	
+	public SensorList getSensorList(){
+		return sensors;
 	}
 	
 	public Broker getBroker(){

@@ -106,14 +106,11 @@
    </center>
    <left>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <center>
-            <ListView fx:id="listSensors" prefHeight="191.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-         </center>
          <bottom>
             <HBox alignment="CENTER" prefHeight="45.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="btnSearchSensor" mnemonicParsing="false" prefHeight="26.0" prefWidth="111.0" text="Search Devices" />
-                  <Button fx:id="btnConnectDevice" mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Connect">
+                  <Button fx:id="btnSearchDevices" disable="true" mnemonicParsing="false" onAction="#searchDevices" prefHeight="26.0" prefWidth="111.0" text="Search Devices" />
+                  <Button fx:id="btnConnectDevice" disable="true" mnemonicParsing="false" onAction="#connectDevice" prefHeight="26.0" prefWidth="70.0" text="Connect">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
@@ -121,6 +118,12 @@
                </children>
             </HBox>
          </bottom>
+         <left>
+            <ListView fx:id="listSensors" prefHeight="190.0" prefWidth="137.0" BorderPane.alignment="CENTER" />
+         </left>
+         <right>
+            <ListView fx:id="listConnSensors" prefHeight="190.0" prefWidth="138.0" BorderPane.alignment="CENTER" />
+         </right>
       </BorderPane>
    </left>
 </BorderPane>
