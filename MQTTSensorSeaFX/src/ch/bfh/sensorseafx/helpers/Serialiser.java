@@ -38,7 +38,7 @@ public class Serialiser{
 		} catch (ClassNotFoundException e) {
 			o=new String(bytes);
 		}
-		
+
 		return o;
 	}
 }

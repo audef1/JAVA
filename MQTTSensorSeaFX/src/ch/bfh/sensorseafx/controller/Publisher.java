@@ -33,13 +33,14 @@ public class Publisher extends ScheduledService<Void>{
 			@Override
 			protected Void call() throws Exception {
 				System.out.println("publisherservice running...");
+				status = "running...";
 				if (!(sensors.getSensors().isEmpty())){
 					if (!(topics.getTopics().isEmpty())){
 						System.out.println("connected - publishing values...");
 						for (Sensor sensor : sensors.getSensors()){
-							if (sensor.isRunning()){
-								publish(sensor);
-							}
+							sensor.update();
+							publish(sensor);
+							sensor.cleanup();
 						}
 					}
 				}
@@ -48,24 +49,12 @@ public class Publisher extends ScheduledService<Void>{
 		};
 	}
 	
-	public void publish(Sensor s){
-		try {
-			byte[] bytes = ser.serialize(s);
-			MqttMessage message = new MqttMessage(bytes);
-			try {
-				for (String topic:topics.getTopics()){
-					broker.getClient().publish(topic, message);
-					if (debug){System.out.println("Sensorvalue published to " + topic + "!");}else{};
-				}
-			} catch (MqttPersistenceException e) {
-				e.printStackTrace();
-			} catch (MqttException e) {
-				e.printStackTrace();
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void publish(Sensor s) throws ClassNotFoundException, IOException, MqttPersistenceException, MqttException{
+		byte[] bytes = ser.serialize(s);
+		MqttMessage message = new MqttMessage(bytes);
+		for (String topic : topics.getTopics()){
+			broker.getClient().publish(topic, message);
+			if (debug){System.out.println("Sensorvalue published to " + topic + "!");}else{};
 		}
 	}
 	
@@ -90,9 +79,7 @@ public class Publisher extends ScheduledService<Void>{
 				
 				if (debug){System.out.println("Subscribed to the topic " + topic + ".");}else{};
 				status = "Subscribed to the topic " + topic + ".";
-				
 			}
-	    	
 		}
 	}
 	
@@ -108,7 +95,6 @@ public class Publisher extends ScheduledService<Void>{
 			
 			if (debug){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 			status = "Unsubscribed from topic " + topic + ".";
-			
 		}
 		else{
 			if (debug){System.out.println("No such topic to unsubscribe.");}else{};
@@ -122,6 +108,7 @@ public class Publisher extends ScheduledService<Void>{
 			unsubscribe(topic);
 		}
 		topics.removeAll();
+		sensors.removeAll();
 	}
 	
 	public void addSensor(Sensor sensor){

@@ -80,7 +80,7 @@ public class FXMLSubController implements Observer{
     	if (sub.getBroker().isConnected()){
     		//disconnect
     		sub.unsubscribeAll();
-        	sub.getBroker().disconnect();
+    		sub.getBroker().disconnect();
     	}
     	else{
     		//connect

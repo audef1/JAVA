@@ -36,32 +36,43 @@ public class Broker extends Observable {
 	
 	public void connect(String host, int port, String username, String password){
 		try {
-			if (client == null){
-				client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
-				options.setConnectionTimeout(3);
-				options.setCleanSession(false);
-				options.setUserName(username);
-				options.setPassword(password.toCharArray());
-	            	System.out.println("Connecting to broker: "+ host);
-				client.connect(options);
-					System.out.println("Connected!");
-					this.setChanged();
-			    	this.notifyObservers();
+			if (client != null)
+			{
+				if (client.isConnected()){
+					System.out.println("Connection to " + client.getServerURI() + " already established.");
+				}
 			}
 			else
 			{
-				System.out.println("Connection to " + client.getServerURI() + " already established.");
+					client = new MqttClient("tcp://" + host + ":" + port + "", clientID, null);
+					//options.setConnectionTimeout(3);
+					options.setCleanSession(false);
+					options.setUserName(username);
+					options.setPassword(password.toCharArray());
+		            	System.out.println("Connecting to broker: "+ host);
+					client.connect(options);
+						System.out.println("Connected!");
+						this.setChanged();
+				    	this.notifyObservers();
+				}
 			}
-		} catch (MqttException e) {
+		catch (MqttException e) {
 			connAlert(e);
 		}
 	}
 	
 	public void connect(String host, String username, String password){
 		try {
-			if (client == null){
-				client = new MqttClient("tcp://" + host + ":1883", clientID);
-				options.setConnectionTimeout(3);
+			if (client != null)
+			{
+				if (client.isConnected()){
+					System.out.println("Connection to " + client.getServerURI() + " already established.");
+				}
+			}
+			else
+			{
+				client = new MqttClient("tcp://" + host + ":1883", clientID, null);
+				//options.setConnectionTimeout(3);
 				options.setCleanSession(false);
 				options.setUserName(username);
 				options.setPassword(password.toCharArray());
@@ -71,10 +82,6 @@ public class Broker extends Observable {
 				this.setChanged();
 		    	this.notifyObservers();
 			}
-			else
-			{
-				System.out.println("Connection to " + client.getServerURI() + " already established.");
-			}
 		} catch (MqttException e) {
 			connAlert(e);
 		}
@@ -82,19 +89,22 @@ public class Broker extends Observable {
 	
 	public void connect(String host){
 		try {
-			if (client == null){
-				client = new MqttClient("tcp://" + host + ":1883", clientID);
-				options.setConnectionTimeout(3);
+			if (client != null)
+			{
+				if (client.isConnected()){
+					System.out.println("Connection to " + client.getServerURI() + " already established.");
+				}
+			}
+			else
+			{
+				client = new MqttClient("tcp://" + host + ":1883", clientID, null);
+				//options.setConnectionTimeout(3);
 				System.out.println("Connecting to broker: "+ host);
 				options.setCleanSession(false);
 				client.connect(options);
 				System.out.println("Connected!");
 				this.setChanged();
 		    	this.notifyObservers();
-			}
-			else
-			{
-				System.out.println("Connection to " + client.getServerURI() + " already established.");
 			}
 		} catch (MqttException e) {
 			connAlert(e);
@@ -103,14 +113,24 @@ public class Broker extends Observable {
 	
 	public void connect(String host, int port){
 		try {
-			client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
-			options.setConnectionTimeout(3);
-			System.out.println("Connecting to broker: "+ host);
-			client.connect(options);
-			System.out.println("Connected!");
-			this.setChanged();
-	    	this.notifyObservers();
-		} catch (MqttException e) {
+			if (client != null)
+			{
+				if (client.isConnected()){
+					System.out.println("Connection to " + client.getServerURI() + " already established.");
+				}
+			}
+			else
+			{
+				client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
+				//options.setConnectionTimeout(3);
+				System.out.println("Connecting to broker: "+ host);
+				client.connect(options);
+				System.out.println("Connected!");
+				this.setChanged();
+		    	this.notifyObservers();
+			}
+		}
+		catch (MqttException e) {
 			connAlert(e);
 		}
 	}
@@ -118,6 +138,7 @@ public class Broker extends Observable {
 	public void disconnect(){
 		try {
 			client.disconnect();
+			client.close();
 			System.out.println("Disconnected!");
 			client = null;
 			this.setChanged();

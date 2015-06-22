@@ -10,9 +10,9 @@ import javafx.concurrent.Task;
 import javax.xml.bind.annotation.XmlElement;
 
 public abstract class Sensor extends ScheduledService<Void> implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
+	
 	private long timestamp;
 	private String sourceID;
 
@@ -30,15 +30,18 @@ public abstract class Sensor extends ScheduledService<Void> implements Serializa
 			@Override
 			protected Void call() throws Exception {
 				System.out.println("Sensor "+ sourceID + " running");
-				setTimestamp();
-				addValues();
-				cleanup();
+				update();
 				return null;
 			}
 		};
 	}
 	
-	private void cleanup(){
+	public void update(){
+		setTimestamp();
+		addValues();
+	}
+	
+	public void cleanup(){
 		values = new ArrayList<Object>();
 	}
 	

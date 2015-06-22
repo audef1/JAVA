@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "tempsensor")
 public class TempSensor extends Sensor {
 	
-	private static final long serialVersionUID = 2L;
-	
+	private static final long serialVersionUID = 1L;
+
 	public TempSensor(){}
 	
 	public TempSensor(String id){
@@ -27,14 +27,15 @@ public class TempSensor extends Sensor {
 
 	@Override
 	public void addValues() {
-		getValues().add(1 + (int)(Math.random()*35));
+		this.getValues().add(1 + (int)(Math.random()*35));
+		this.getValues().add(20);
 	}
 
 	@Override
 	public String toString() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		String date = df.format(new Date(getTimestamp()));
-		return date + " - " + getSourceID() + ": " + getValues().get(0) +" .";
+		return date + " - " + getSourceID() + ": " + this.getValues().get(0) +" .";
 	}
 
 }

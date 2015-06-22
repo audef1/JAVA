@@ -3,6 +3,7 @@ package ch.bfh.sensorseafx.controller;
 import java.io.StreamCorruptedException;
 import java.util.Date;
 
+import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 
@@ -35,26 +36,37 @@ public class Subscriber extends ScheduledService<Void>{
 			@Override
 			protected Void call() throws Exception {
 				System.out.println("subscriberservice running...");
-				if (broker.isConnected()) {
+				if (!(topics.getTopics().isEmpty())){
 					System.out.println("connected - waiting for messages...");
 					broker.getClient().setCallback(new MqttCallback() {
 						@Override
 						public void connectionLost(Throwable throwable) {
-							System.out.println("Connection Lost");
+							System.out.println("connection lost");
+							status ="connection lost";
 						}
 
 						@Override
 						public void messageArrived(String string, MqttMessage message) throws Exception, StreamCorruptedException {
-							//if (Sensor.class.isAssignableFrom(ser.deserialize(message.getPayload()).getClass())){
+							//if ((ser.deserialize(message.getPayload()) instanceof Sensor)){
+								
+							try{
 								Sensor s = (Sensor) ser.deserialize(message.getPayload());
 								if (debug) {
-									System.out.println("From " + string + ": " + s);
+									//System.out.println("From " + string + ": " + s);
 								}
+								//System.out.println(s);
 								datastore.add(s);
+							}
+							catch (Exception e){
+								e.printStackTrace();
+							}
+																
 //							} else {
 //								if (debug) {
 //									System.out.println("From " + string + ": " + message);
 //								}
+//								Sensor s = (Sensor) ser.deserialize(message.getPayload());
+//								datastore.add(s);
 //							}
 						}
 
@@ -63,8 +75,8 @@ public class Subscriber extends ScheduledService<Void>{
 
 						}
 
-					});
-				}
+					});	
+				}	
 				return null;
 			}
 		};

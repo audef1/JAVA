@@ -138,14 +138,13 @@ public class FXMLPubController implements Observer {
     
     @FXML
     void connectDevice(ActionEvent event){
-    	//
-    	if (liSensor.getSelectionModel().getSelectedItem() != null){
-    		Sensor s = new TempSensor(liSensor.getSelectionModel().getSelectedItem());
-    		s.start();
-    		pub.getSensorList().add(s);
-    	}
-    	
-    
+    	Platform.runLater(() -> {
+	    	if (liSensor.getSelectionModel().getSelectedItem() != null){
+	    		Sensor s = new TempSensor(liSensor.getSelectionModel().getSelectedItem());
+	    		s.start();
+	    		pub.getSensorList().add(s);
+	    	}
+    	});
     }
     
 	@Override
@@ -164,6 +163,8 @@ public class FXMLPubController implements Observer {
 				if (!(pub.getSensorList().getDevices().isEmpty())){
 					btnConnectDevice.setDisable(false);
 				}
+				
+				
 				
 				inputTopic.setDisable(false);
 				inputTopic.setEditable(true);

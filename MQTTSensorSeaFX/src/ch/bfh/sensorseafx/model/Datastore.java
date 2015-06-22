@@ -37,7 +37,8 @@ public class Datastore extends Observable{
 	private int intervaltype = (1000*60*60*24); //day
 	
 	public Datastore(){
-		tempSeries.setName("testserie");
+		tempSeries.setName("Messwerte");
+		tempChartData.addAll(tempSeries);
 	}
 	
 	public void add(Sensor s){
