@@ -118,12 +118,14 @@
                </children>
             </HBox>
          </bottom>
-         <left>
-            <ListView fx:id="listSensors" prefHeight="190.0" prefWidth="137.0" BorderPane.alignment="CENTER" />
-         </left>
-         <right>
-            <ListView fx:id="listConnSensors" prefHeight="190.0" prefWidth="138.0" BorderPane.alignment="CENTER" />
-         </right>
+         <center>
+            <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ListView fx:id="liSensor" prefHeight="190.0" prefWidth="137.0" />
+                  <ListView fx:id="liConnected" prefHeight="190.0" prefWidth="138.0" />
+               </children>
+            </HBox>
+         </center>
       </BorderPane>
    </left>
 </BorderPane>

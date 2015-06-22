@@ -72,10 +72,10 @@ public class FXMLPubController implements Observer {
     private ListView<String> listTopic;
 
     @FXML
-    private ListView<String> listSensors;
+    private ListView<String> liSensor;
     
     @FXML
-    private ListView<String> listConnSensors;
+    private ListView<String> liConnected;
    
     @FXML
     void connect(ActionEvent event) throws InterruptedException{
@@ -131,15 +131,21 @@ public class FXMLPubController implements Observer {
     void searchDevices(ActionEvent event){
     	//testing
     	System.out.println("searching for devices...");
-		pub.getSensorList().addTestSensor("ab:cd:ef:12:34");
-		pub.getSensorList().addTestSensor("99:99:99:99:99");
-		pub.getSensorList().addTestSensor("12:34:56:78:90");
+		pub.getSensorList().addDevice("ab:cd:ef:12:34");
+		pub.getSensorList().addDevice("99:99:99:99:99");
+		pub.getSensorList().addDevice("12:34:56:78:90");
     }
     
     @FXML
     void connectDevice(ActionEvent event){
     	//
-    	pub.getSensorList().add(new TempSensor(listSensors.getSelectionModel().getSelectedItem()));
+    	if (liSensor.getSelectionModel().getSelectedItem() != null){
+    		Sensor s = new TempSensor(liSensor.getSelectionModel().getSelectedItem());
+    		s.start();
+    		pub.getSensorList().add(s);
+    	}
+    	
+    
     }
     
 	@Override
@@ -155,7 +161,7 @@ public class FXMLPubController implements Observer {
 				
 				btnSearchDevices.setDisable(false);
 				
-				if (listSensors.getSelectionModel().getSelectedItem() != null){
+				if (!(pub.getSensorList().getDevices().isEmpty())){
 					btnConnectDevice.setDisable(false);
 				}
 				
@@ -187,8 +193,8 @@ public class FXMLPubController implements Observer {
 			
 			if (o.equals(pub.getSensorList())){
 				// replace with sensorlist from bluetoothdongle
-				listSensors.setItems(pub.getSensorList().getTestSensors());
-				listConnSensors.setItems(pub.getSensorList().getConnectedSensors());
+				liSensor.setItems(pub.getSensorList().getDevices());
+				liConnected.setItems(pub.getSensorList().getConnectedSensors());
 			}
 		});
 	}

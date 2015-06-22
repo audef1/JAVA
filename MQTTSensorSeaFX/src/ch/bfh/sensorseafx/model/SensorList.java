@@ -9,9 +9,11 @@ import javafx.collections.ObservableList;
 
 public class SensorList extends Observable{
 
+	//the actual sensors
 	private ObservableList<Sensor> sensors = FXCollections.observableArrayList();
-	private ObservableList<String> connectedSensors = FXCollections.observableArrayList();
-	private ObservableList<String> testSensors = FXCollections.observableArrayList();
+	
+	//list of devices found
+	private ObservableList<String> devices = FXCollections.observableArrayList();
 	
 	public SensorList(){
 
@@ -40,24 +42,24 @@ public class SensorList extends Observable{
 	}
 	
 	public ObservableList<String> getConnectedSensors(){
+		ObservableList<String> connectedSensors = FXCollections.observableArrayList();
 		for (Sensor sensor : sensors){
 			if (sensor.isRunning()){
 				connectedSensors.add(sensor.getSourceID());
 			}
+			this.setChanged();
+			this.notifyObservers();
 		}
 		return connectedSensors;
 	}
 	
-	//for testing
-	
-	public void addTestSensor(String s){
-		sensors.add(new TempSensor(s));
+	public void addDevice(String s){
+		devices.add(s);
 		this.setChanged();
-    	this.notifyObservers();
+		this.notifyObservers();
 	}
 	
-	
-	public ObservableList<String> getTestSensors(){
-		return testSensors;
+	public ObservableList<String> getDevices(){
+		return devices;
 	}
 }

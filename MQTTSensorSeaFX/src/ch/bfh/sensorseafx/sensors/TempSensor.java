@@ -20,7 +20,7 @@ public class TempSensor extends Sensor {
 	public TempSensor(String id){
 		this.setSourceID(id);
 		this.setPeriod(Duration.minutes(1));
-		this.start();
+		//this.start();
 		System.out.println("adding new sensor");
 		System.out.println("connecting to " + id);
 	}

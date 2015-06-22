@@ -2,6 +2,7 @@ package ch.bfh.sensorseafx.controller;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Optional;
 
@@ -19,10 +20,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class Broker extends Observable {
 
-	private String clientID = "undefined";
+	private String id = Double.toString(new Date().getTime());
+	private String clientID = "bro" + id;
 	
 	private MqttClient client;
-	private MqttConnectOptions connOpt = new MqttConnectOptions();
+	private MqttConnectOptions options = new MqttConnectOptions();
 	
 	public Broker(){
 		
@@ -36,12 +38,12 @@ public class Broker extends Observable {
 		try {
 			if (client == null){
 				client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
-				connOpt.setConnectionTimeout(3);
-				connOpt.setCleanSession(false);
-				connOpt.setUserName(username);
-				connOpt.setPassword(password.toCharArray());
+				options.setConnectionTimeout(3);
+				options.setCleanSession(false);
+				options.setUserName(username);
+				options.setPassword(password.toCharArray());
 	            	System.out.println("Connecting to broker: "+ host);
-				client.connect(connOpt);
+				client.connect(options);
 					System.out.println("Connected!");
 					this.setChanged();
 			    	this.notifyObservers();
@@ -59,12 +61,12 @@ public class Broker extends Observable {
 		try {
 			if (client == null){
 				client = new MqttClient("tcp://" + host + ":1883", clientID);
-				connOpt.setConnectionTimeout(3);
-				connOpt.setCleanSession(false);
-				connOpt.setUserName(username);
-				connOpt.setPassword(password.toCharArray());
+				options.setConnectionTimeout(3);
+				options.setCleanSession(false);
+				options.setUserName(username);
+				options.setPassword(password.toCharArray());
 	            System.out.println("Connecting to broker: "+ host);
-				client.connect(connOpt);
+				client.connect(options);
 				System.out.println("Connected!");
 				this.setChanged();
 		    	this.notifyObservers();
@@ -82,10 +84,10 @@ public class Broker extends Observable {
 		try {
 			if (client == null){
 				client = new MqttClient("tcp://" + host + ":1883", clientID);
-				connOpt.setConnectionTimeout(3);
+				options.setConnectionTimeout(3);
 				System.out.println("Connecting to broker: "+ host);
-				connOpt.setCleanSession(false);
-				client.connect(connOpt);
+				options.setCleanSession(false);
+				client.connect(options);
 				System.out.println("Connected!");
 				this.setChanged();
 		    	this.notifyObservers();
@@ -102,9 +104,9 @@ public class Broker extends Observable {
 	public void connect(String host, int port){
 		try {
 			client = new MqttClient("tcp://" + host + ":" + port + "", clientID);
-			connOpt.setConnectionTimeout(3);
+			options.setConnectionTimeout(3);
 			System.out.println("Connecting to broker: "+ host);
-			client.connect(connOpt);
+			client.connect(options);
 			System.out.println("Connected!");
 			this.setChanged();
 	    	this.notifyObservers();
