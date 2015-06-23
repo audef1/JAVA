@@ -30,6 +30,7 @@ public class Main extends Application {
 			Stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			    @Override public void handle(WindowEvent t) {
 			        System.out.println("CLOSING");
+			        System.exit(0);
 			    }
 			});
 		

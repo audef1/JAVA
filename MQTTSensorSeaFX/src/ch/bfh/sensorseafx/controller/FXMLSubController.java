@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
+
 import ch.bfh.sensorseafx.model.Datastore;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -161,6 +163,11 @@ public class FXMLSubController implements Observer{
 			}
 			
 			linechartTemp.setData(store.getDatastore());
+			
+			//for multiple sensors
+//			for (Series<String, Number> serie : store.getDatastore()){
+//				linechartTemp.getData().addAll(serie);
+//			}
 		});
 	}
 }
