@@ -52,10 +52,14 @@ public class Subscriber extends ScheduledService<Void>{
 							try{
 								Sensor s = (Sensor) ser.deserialize(message.getPayload());
 								if (debug) {
-									//System.out.println("From " + string + ": " + s);
+									System.out.println("From " + string + ": " + s);
 								}
 								//System.out.println(s);
-								datastore.add(s);
+								Platform.runLater(new Runnable() {
+					            	@Override public void run() {
+					                	datastore.add(s);
+					            	}
+					            });
 							}
 							catch (Exception e){
 								e.printStackTrace();
@@ -109,11 +113,16 @@ public class Subscriber extends ScheduledService<Void>{
 		if (topics.getTopics().contains(topic)){
 			topics.remove(topic);
 			
-			try {
-				broker.getClient().unsubscribe(topic);
-			} catch (MqttException e) {
-				e.printStackTrace();
-			}
+			Platform.runLater(new Runnable() {
+			     @Override public void run() {
+			    	 try {
+						broker.getClient().unsubscribe(topic);
+					} catch (MqttException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			     }
+			 });
 			
 			if (debug){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 			status = "Unsubscribed from topic " + topic + ".";
@@ -127,10 +136,15 @@ public class Subscriber extends ScheduledService<Void>{
 	}
 	
 	public void unsubscribeAll(){
-		for (String topic : topics.getTopics()){
-			unsubscribe(topic);
-		}
-		topics.removeAll();
+		 Platform.runLater(new Runnable() {
+             @Override public void run() {
+            	for (String topic : topics.getTopics()){
+         			unsubscribe(topic);
+         		}
+         		topics.removeAll();
+             }
+         });
+		
 	}
 	
 	public void setBroker(Broker broker){

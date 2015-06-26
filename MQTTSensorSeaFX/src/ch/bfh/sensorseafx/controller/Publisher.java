@@ -3,6 +3,7 @@ package ch.bfh.sensorseafx.controller;
 import java.io.IOException;
 import java.util.Date;
 
+import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 
@@ -37,11 +38,29 @@ public class Publisher extends ScheduledService<Void>{
 				if (!(sensors.getSensors().isEmpty())){
 					if (!(topics.getTopics().isEmpty())){
 						System.out.println("connected - publishing values...");
-						for (Sensor sensor : sensors.getSensors()){
-							sensor.update();
-							publish(sensor);
-							sensor.cleanup();
-						}
+						Platform.runLater(new Runnable() {
+							@Override public void run() {
+								for (Sensor sensor : sensors.getSensors()){
+									try {
+										sensor.update();
+										publish(sensor);
+										sensor.cleanup();
+									} catch (ClassNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (MqttPersistenceException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (MqttException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+			            	}
+						});
 					}
 				}
 				return null;
@@ -104,11 +123,15 @@ public class Publisher extends ScheduledService<Void>{
 	}
 	
 	public void unsubscribeAll(){
-		for (String topic : topics.getTopics()){
-			unsubscribe(topic);
-		}
-		topics.removeAll();
-		sensors.removeAll();
+		 Platform.runLater(new Runnable() {
+             @Override public void run() {
+            	for (String topic : topics.getTopics()){
+         			unsubscribe(topic);
+         		}
+         		topics.removeAll();
+         		sensors.removeAll();
+             }
+         });
 	}
 	
 	public void addSensor(Sensor sensor){

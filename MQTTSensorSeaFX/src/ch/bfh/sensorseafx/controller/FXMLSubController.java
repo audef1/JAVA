@@ -164,10 +164,6 @@ public class FXMLSubController implements Observer{
 			
 			linechartTemp.setData(store.getDatastore());
 			
-			//for multiple sensors
-//			for (Series<String, Number> serie : store.getDatastore()){
-//				linechartTemp.getData().addAll(serie);
-//			}
 		});
 	}
 }
