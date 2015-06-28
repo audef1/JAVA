@@ -163,7 +163,7 @@ public class FXMLSubController implements Observer{
 			}
 			
 			linechartTemp.setData(store.getDatastore());
-			
+			linechartTemp.setAxisSortingPolicy(LineChart.SortingPolicy.NONE);
 		});
 	}
 }

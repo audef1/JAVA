@@ -9,12 +9,13 @@ import javafx.concurrent.Task;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public abstract class Sensor extends ScheduledService<Void> implements Serializable{
+public abstract class Sensor implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	private long timestamp;
 	private String sourceID;
+	private boolean running = false;
 
 	@XmlElement(name ="value")
 	private ArrayList<Object> values = new ArrayList<Object>();
@@ -23,18 +24,6 @@ public abstract class Sensor extends ScheduledService<Void> implements Serializa
 	
 	public abstract void addValues();
 	public abstract String toString();
-		
-	@Override
-	protected Task<Void> createTask() {
-		return new Task<Void>() {
-			@Override
-			protected Void call() throws Exception {
-				System.out.println("Sensor "+ sourceID + " running");
-				update();
-				return null;
-			}
-		};
-	}
 	
 	public void update(){
 		setTimestamp();
@@ -65,4 +54,18 @@ public abstract class Sensor extends ScheduledService<Void> implements Serializa
 		return values;
 	}
 
+	public void setRunning(boolean running){
+		if (running){
+			this.running = running;
+			System.out.println("Sensor "+ sourceID + " running.");
+		}
+		else{
+			this.running = running;
+			System.out.println("Sensor "+ sourceID + " stopped.");
+		}
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
 }

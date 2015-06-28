@@ -6,6 +6,7 @@ import java.util.Date;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
+import javafx.scene.chart.LineChart;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -38,28 +39,24 @@ public class Publisher extends ScheduledService<Void>{
 				if (!(sensors.getSensors().isEmpty())){
 					if (!(topics.getTopics().isEmpty())){
 						System.out.println("connected - publishing values...");
-						Platform.runLater(new Runnable() {
-							@Override public void run() {
-								for (Sensor sensor : sensors.getSensors()){
-									try {
-										sensor.update();
-										publish(sensor);
-										sensor.cleanup();
-									} catch (ClassNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (MqttPersistenceException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (MqttException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+						Platform.runLater(() -> {
+							for (Sensor sensor : sensors.getSensors()){
+								try {
+									publish(sensor);
+								} catch (ClassNotFoundException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (MqttPersistenceException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (MqttException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-			            	}
+							}
 						});
 					}
 				}
@@ -69,12 +66,14 @@ public class Publisher extends ScheduledService<Void>{
 	}
 	
 	public void publish(Sensor s) throws ClassNotFoundException, IOException, MqttPersistenceException, MqttException{
+		s.update();
 		byte[] bytes = ser.serialize(s);
 		MqttMessage message = new MqttMessage(bytes);
 		for (String topic : topics.getTopics()){
 			broker.getClient().publish(topic, message);
 			if (debug){System.out.println("Sensorvalue published to " + topic + "!");}else{};
 		}
+		s.cleanup();
 	}
 	
 	public void setDebug(boolean debug){
@@ -106,12 +105,14 @@ public class Publisher extends ScheduledService<Void>{
 		if (topics.getTopics().contains(topic)){
 			topics.remove(topic);
 			
-			try {
-				broker.getClient().unsubscribe(topic);
-			} catch (MqttException e) {
-				e.printStackTrace();
-			}
-			
+				Platform.runLater(() -> {
+					try {
+						broker.getClient().unsubscribe(topic);
+					} catch (MqttException e) {
+						e.printStackTrace();
+					}
+				});
+
 			if (debug){System.out.println("Unsubscribed from topic " + topic + ".");}else{};
 			status = "Unsubscribed from topic " + topic + ".";
 		}
@@ -128,8 +129,8 @@ public class Publisher extends ScheduledService<Void>{
             	for (String topic : topics.getTopics()){
          			unsubscribe(topic);
          		}
+            	sensors.removeAll();
          		topics.removeAll();
-         		sensors.removeAll();
              }
          });
 	}

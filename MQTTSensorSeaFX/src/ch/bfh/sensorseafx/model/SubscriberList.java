@@ -2,6 +2,7 @@ package ch.bfh.sensorseafx.model;
 
 import java.util.Observable;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -22,9 +23,9 @@ public class SubscriberList extends Observable{
 	}
 	
 	public void removeAll(){
-		topics = FXCollections.observableArrayList();
-		this.setChanged();
-		this.notifyObservers();
+			for (String topic : topics){
+				remove(topic);
+			}
 	}
 	
 	public ObservableList<String> getTopics(){

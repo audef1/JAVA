@@ -141,11 +141,48 @@ public class FXMLPubController implements Observer {
     	Platform.runLater(() -> {
 	    	if (liSensor.getSelectionModel().getSelectedItem() != null){
 	    		Sensor s = new TempSensor(liSensor.getSelectionModel().getSelectedItem());
-	    		s.start();
 	    		pub.getSensorList().add(s);
+	    		liSensor.getSelectionModel().clearSelection();
+	    	}
+	    	else if (liConnected.getSelectionModel().getSelectedItem() != null){
+	    		String s = liConnected.getSelectionModel().getSelectedItem();
+	    		pub.getSensorList().remove(s);
+	    		liConnected.getSelectionModel().clearSelection();
 	    	}
     	});
     }
+    
+    @FXML
+    void updateSensorList(){
+    	Platform.runLater(() -> {
+    		if (liSensor.getSelectionModel().getSelectedItem() != null){
+				btnConnectDevice.setText("Connect");
+				btnConnectDevice.setStyle("-fx-text-fill: black;");
+			}
+			else
+			{
+				btnConnectDevice.setText("Disconnect");
+				btnConnectDevice.setStyle("-fx-text-fill: red;");
+			}
+    		liConnected.getSelectionModel().clearSelection();
+		});
+    } 
+    
+    @FXML
+    void updateConnectedDevices(){
+    	Platform.runLater(() -> {
+    		if (liConnected.getSelectionModel().getSelectedItem() != null){
+				btnConnectDevice.setText("Disconnect");
+				btnConnectDevice.setStyle("-fx-text-fill: red;");
+			}
+			else
+			{
+				btnConnectDevice.setText("Connect");
+				btnConnectDevice.setStyle("-fx-text-fill: black;");
+			}
+    		liSensor.getSelectionModel().clearSelection();
+		});
+    } 
     
 	@Override
 	public synchronized void update(Observable o, Object arg) {
@@ -163,8 +200,6 @@ public class FXMLPubController implements Observer {
 				if (!(pub.getSensorList().getDevices().isEmpty())){
 					btnConnectDevice.setDisable(false);
 				}
-				
-				
 				
 				inputTopic.setDisable(false);
 				inputTopic.setEditable(true);

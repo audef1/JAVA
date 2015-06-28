@@ -31,10 +31,23 @@ public class SensorList extends Observable{
     	this.notifyObservers();
 	}
 	
-	public void removeAll(){
-		sensors = FXCollections.observableArrayList();
+	public void remove(String sensorname){
+		Sensor sensor = null;
+		for (Sensor s : sensors){
+			if (s.getSourceID().equals(sensorname)){
+				sensor = s;
+			}
+		}
+		
+		sensors.remove(sensors.indexOf(sensor));
 		this.setChanged();
-		this.notifyObservers();
+    	this.notifyObservers();
+	}
+	
+	public void removeAll(){
+		for (Sensor sensor : sensors){
+			remove(sensor);
+		}
 	}
 	
 	public ObservableList<Sensor> getSensors(){
@@ -47,9 +60,9 @@ public class SensorList extends Observable{
 			if (sensor.isRunning()){
 				connectedSensors.add(sensor.getSourceID());
 			}
-			this.setChanged();
-			this.notifyObservers();
 		}
+		this.setChanged();
+		this.notifyObservers();
 		return connectedSensors;
 	}
 	
